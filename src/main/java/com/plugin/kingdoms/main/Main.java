@@ -24,12 +24,12 @@ public final class Main extends JavaPlugin {
 
         instance = this;
 
-
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        KingdomManager.safeData();
     }
 
     public static Main getInstance(){

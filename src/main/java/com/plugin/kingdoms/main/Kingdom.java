@@ -22,7 +22,7 @@ public class Kingdom {
     private int particleAmount;
     private final ArrayList<Location> ParticleLocations;
     private int particleRunnableId;
-    private ArrayList<Location> portLocations;
+    private final ArrayList<Location> portLocations;
 
     //Permissions
     //1-Everyone, 2-Members+, 3-Admins+, 4- only owner
@@ -45,12 +45,12 @@ public class Kingdom {
     public Kingdom(UUID owner){
 
         this.owner = owner;
-        this.ParticleLocations = new ArrayList<>();
-        this.particleType = Particle.ASH;
-        this.admins = new ArrayList<>();
-        this.members = new ArrayList<>();
-        this.particleAmount = 10;
-        this.portLocations = new ArrayList<>();
+        ParticleLocations = new ArrayList<>();
+        particleType = Particle.ASH;
+        admins = new ArrayList<>();
+        members = new ArrayList<>();
+        particleAmount = 10;
+        portLocations = new ArrayList<>();
 
 
         //Standard permissions
@@ -277,6 +277,15 @@ public class Kingdom {
     }
     public ArrayList<Location> getPortLocations(){
         return portLocations;
+    }
+    public Particle getParticleType(){
+        return particleType;
+    }
+    public int getParticleAmount(){
+        return  particleAmount;
+    }
+    public ArrayList<Location> getParticleLocations() {
+        return ParticleLocations;
     }
 
     public void openSettingsGui(Player player){
