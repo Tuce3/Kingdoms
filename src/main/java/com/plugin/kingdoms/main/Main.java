@@ -24,6 +24,15 @@ public final class Main extends JavaPlugin {
 
         instance = this;
 
+        KingdomManager.loadData();
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+            @Override
+            public void run() {
+                KingdomManager.safeData();
+            }
+        }, 400, 600);
+
     }
 
     @Override

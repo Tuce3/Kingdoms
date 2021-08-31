@@ -4,3 +4,6 @@ main: com.plugin.kingdoms.main.Main
 api-version: 1.16
 commands:
   kingdom:
+    description: All Commands for the Kingdom start with kingdom. To see more info type /kingdom help
+    aliases:
+      - k

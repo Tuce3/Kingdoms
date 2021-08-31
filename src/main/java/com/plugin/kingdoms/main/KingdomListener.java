@@ -28,9 +28,9 @@ public class KingdomListener implements Listener {
                 Kingdom k = KingdomManager.getUnfinishedKingdomList().get(i);
                 if(k.getOwner().equals(e.getPlayer().getUniqueId())){
                     if(k.getMinLocation() == null){
-                        k.setMinLocation(e.getClickedBlock().getLocation());
+                        k.setMinLocation(e.getClickedBlock().getLocation(), false);
                     }else if(k.getMaxLocation() == null){
-                        k.setMaxLocation(e.getClickedBlock().getLocation());
+                        k.setMaxLocation(e.getClickedBlock().getLocation(), false);
                     }
                 }
             }
@@ -41,18 +41,22 @@ public class KingdomListener implements Listener {
                 if(k.getAdmins().contains(e.getPlayer().getUniqueId())){
                     if(k.getInteract() == 4){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else if(k.getOwner().equals(e.getPlayer().getUniqueId())){
                     if(k.getInteract() > 4){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else if(k.getMembers().contains(e.getPlayer().getUniqueId())){
                     if(k.getInteract() > 2){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else{
                     if(k.getInteract() > 1){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }
             }
@@ -109,6 +113,7 @@ public class KingdomListener implements Listener {
                 }
 
                 player.teleport(new Location(portLocation.getWorld(), portLocation.getBlockX(), portLocation.getWorld().getHighestBlockAt(portLocation).getLocation().getY()+ 1, portLocation.getBlockZ(), player.getLocation().getYaw(), player.getLocation().getPitch()));
+                e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to enter this Kingdom!");
             }
         }
 
@@ -401,18 +406,22 @@ public class KingdomListener implements Listener {
                 if(k.getAdmins().contains(e.getPlayer().getUniqueId())){
                     if(k.getDestroyBlocks() == 4){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else if(k.getMembers().contains(e.getPlayer().getUniqueId())){
                     if(k.getDestroyBlocks() > 2){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else if(k.getOwner().equals(e.getPlayer().getUniqueId())){
                     if(k.getInteract() > 4){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else{
                     if(k.getDestroyBlocks() > 1){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }
             }
@@ -426,18 +435,22 @@ public class KingdomListener implements Listener {
                 if(k.getAdmins().contains(e.getPlayer().getUniqueId())){
                     if(k.getDestroyBlocks() == 4){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else if(k.getMembers().contains(e.getPlayer().getUniqueId())){
                     if(k.getDestroyBlocks() > 2){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else if(k.getOwner().equals(e.getPlayer().getUniqueId())){
                     if(k.getInteract() > 4){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else{
                     if(k.getDestroyBlocks() > 1){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }
             }
@@ -452,18 +465,22 @@ public class KingdomListener implements Listener {
                 if(k.getAdmins().contains(e.getPlayer().getUniqueId())){
                     if(k.getInteract() == 4){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else if(k.getMembers().contains(e.getPlayer().getUniqueId())){
                     if(k.getInteract() > 2){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else if(k.getOwner().equals(e.getPlayer().getUniqueId())){
                     if(k.getInteract() > 4){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else{
                     if(k.getInteract() > 1){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }
             }
@@ -479,18 +496,22 @@ public class KingdomListener implements Listener {
                 if(k.getAdmins().contains(e.getPlayer().getUniqueId())){
                     if(k.getInteract() == 4){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else if(k.getMembers().contains(e.getPlayer().getUniqueId())){
                     if(k.getInteract() > 2){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else if(k.getOwner().equals(e.getPlayer().getUniqueId())){
                     if(k.getInteract() > 4){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }else{
                     if(k.getInteract() > 1){
                         e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                     }
                 }
             }
@@ -507,18 +528,22 @@ public class KingdomListener implements Listener {
                     if(k.getAdmins().contains(e.getDamager().getUniqueId())){
                         if(k.getInteract() == 4){
                             e.setCancelled(true);
+                            e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                         }
                     }else if(k.getMembers().contains(e.getDamager().getUniqueId())){
                         if(k.getInteract() > 2){
                             e.setCancelled(true);
+                            e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                         }
                     }else if(k.getOwner().equals(e.getDamager().getUniqueId())){
                         if(k.getInteract() > 4){
                             e.setCancelled(true);
+                            e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                         }
                     }else{
                         if(k.getInteract() > 1){
                             e.setCancelled(true);
+                            e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                         }
                     }
                 }if(k.getArea().containsLocation(e.getEntity().getLocation())){
@@ -528,18 +553,22 @@ public class KingdomListener implements Listener {
                             if (k.getAdmins().contains(e.getDamager().getUniqueId())) {
                                 if (k.getHitPets() == 4 && k.getPetInvulerable()) {
                                     e.setCancelled(true);
+                                    e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                                 }
                             } else if (k.getMembers().contains(e.getDamager().getUniqueId())) {
                                 if (k.getHitPets() > 2 && k.getPetInvulerable()) {
                                     e.setCancelled(true);
+                                    e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                                 }
                             } else if (k.getOwner().equals(e.getDamager().getUniqueId())) {
                                 if (k.getHitPets() > 4 && k.getPetInvulerable()) {
                                     e.setCancelled(true);
+                                    e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                                 }
                             } else {
                                 if (k.getHitPets() > 1 && k.getPetInvulerable()) {
                                     e.setCancelled(true);
+                                    e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
                                 }
                             }
                         }

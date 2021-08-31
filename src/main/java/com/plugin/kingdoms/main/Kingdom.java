@@ -44,98 +44,131 @@ public class Kingdom {
 
     public Kingdom(UUID owner){
 
-        this.owner = owner;
-        ParticleLocations = new ArrayList<>();
-        particleType = Particle.ASH;
-        admins = new ArrayList<>();
-        members = new ArrayList<>();
-        particleAmount = 10;
-        portLocations = new ArrayList<>();
+            this.owner = owner;
+            ParticleLocations = new ArrayList<>();
+            particleType = Particle.ASH;
+            admins = new ArrayList<>();
+            members = new ArrayList<>();
+            particleAmount = 10;
+            portLocations = new ArrayList<>();
 
 
-        //Standard permissions
-        settings = 4;
-        destroyBlocks = 2;
-        addAdmins = 4;
-        addMembers = 3;
-        removeAdmins = 4;
-        removeMembers = 3;
-        interact = 2;
-        PvP = 1;
-        TnTActive = true;
-        invulerablePets = false;
-        hitPets = 3;
-        enterKingdom = 1;
+            //Standard permissions
+            settings = 4;
+            destroyBlocks = 2;
+            addAdmins = 4;
+            addMembers = 3;
+            removeAdmins = 4;
+            removeMembers = 3;
+            interact = 2;
+            PvP = 1;
+            TnTActive = true;
+            invulerablePets = false;
+            hitPets = 3;
+            enterKingdom = 1;
 
     }
 
-    public void setMinLocation(Location location){
+    public Kingdom(UUID owner, Location minLocation, Location maxLocation, Particle type, int particleAmount, int interact, int destroyBlocks, int settings, int addAdmins, int addMembers, int removeAdmins, int removeMembers, int pvp, boolean pets, int hitPets, int enterKingdom, ArrayList<Location> portLocations, ArrayList<Location> particleLocations, ArrayList<UUID> admins, ArrayList<UUID> members, boolean tnTActive){
+
+        this.TnTActive = tnTActive;
+        this.owner = owner;
+        this.ParticleLocations = particleLocations;
+        this.portLocations = portLocations;
+        this.admins = admins;
+        this.members = members;
+        this.enterKingdom = enterKingdom;
+        this.hitPets = hitPets;
+        this.invulerablePets = pets;
+        this.PvP = pvp;
+        this.removeMembers = removeMembers;
+        this.removeAdmins = removeAdmins;
+        this.addMembers = addMembers;
+        this.addAdmins = addAdmins;
+        this.settings = settings;
+        this.destroyBlocks = destroyBlocks;
+        this.interact = interact;
+        this.particleAmount = particleAmount;
+        this.particleType = type;
+        this.setMinLocation(minLocation, true);
+        this.setMaxLocation(maxLocation, true);
+
+
+
+
+    }
+    public void setMinLocation(Location location, boolean dataload){
         this.minLocation = location;
-        if(Bukkit.getPlayer(owner) != null){
+        if(Bukkit.getPlayer(owner) != null&& !dataload){
             Bukkit.getPlayer(owner).sendMessage(ChatColor.GREEN  + "First location set!");
         }
     }
-    public void setMaxLocation(Location location){
+    public void setMaxLocation(Location location, boolean dataload){
         this.maxLocation = location;
 
         if(minLocation != null && maxLocation != null){
-            makeKingdom();
+            makeKingdom(dataload);
         }
     }
 
-    private void makeKingdom(){
+    private void makeKingdom(boolean dataload) {
         KingdomManager.getUnfinishedKingdomList().remove(this);
 
-        if(KingdomManager.getPlayersInKingdoms().containsKey(owner)){
-            if(Bukkit.getPlayer(owner) != null){
-                Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "You can't build a new Kingdom while in a Kingdom!");
-                return;
-            }
-        }
-        if(minLocation.getWorld() != maxLocation.getWorld()){
-            Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "You can't set the Locations in different Worlds!");
-            return;
-        }
 
-        boolean kingdomCantBeCreated = false;
 
-        for(Kingdom k : KingdomManager.getKingdomList()){
-            if(k.getArea().containsLocation(area.getMaxMaxLocation()) || k.getArea().containsLocation(area.getMinMaxLocation()) || k.getArea().containsLocation(area.getMaxMinLocation()) || k.getArea().containsLocation(area.getMinLocation())){
-                kingdomCantBeCreated = true;
-            }
-            if(area.containsLocation(k.getArea().getMinLocation()) || area.containsLocation(k.getArea().getMinMaxLocation()) || area.containsLocation(k.getArea().getMaxMinLocation()) || area.containsLocation(k.getArea().getMaxMinLocation())){
-                kingdomCantBeCreated = true;
-            }
-        }
-
-        if(kingdomCantBeCreated){
-            if(Bukkit.getPlayer(owner) != null){
-                Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "You cant create a new Kingdom here!");
-                return;
-            }
-        }
 
         area = new Cuboid2d(minLocation, maxLocation);
 
-        if((area.getMaxMaxLocation().getBlockZ()-area.getMaxMinLocation().getBlockZ())*(area.getMaxMaxLocation().getBlockX()-area.getMinMaxLocation().getBlockX()) > KingdomManager.getMaxBlocks()){
-            if(Bukkit.getPlayer(owner) != null){
-                Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "Your Kingdom is too big!");
-                if(Bukkit.getPlayer(owner).isOp()){
-                    Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "You can change how big a Kingdom can be with /kingdom settings setmaxblocks <number>");
+        if(!dataload) {
+            if (KingdomManager.getPlayersInKingdoms().containsKey(owner)) {
+                if (Bukkit.getPlayer(owner) != null) {
+                    Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "You can't build a new Kingdom while in a Kingdom!");
+                    return;
                 }
+            }
+            if (minLocation.getWorld() != maxLocation.getWorld()) {
+                Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "You can't set the Locations in different Worlds!");
                 return;
             }
 
+            boolean kingdomCantBeCreated = false;
+
+            if (kingdomCantBeCreated) {
+                if (Bukkit.getPlayer(owner) != null) {
+                    Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "You cant create a new Kingdom here!");
+                    return;
+                }
+            }
+
+            for (Kingdom k : KingdomManager.getKingdomList()) {
+                if (k.getArea().containsLocation(area.getMaxMaxLocation()) || k.getArea().containsLocation(area.getMinMaxLocation()) || k.getArea().containsLocation(area.getMaxMinLocation()) || k.getArea().containsLocation(area.getMinLocation())) {
+                    kingdomCantBeCreated = true;
+                }
+                if (area.containsLocation(k.getArea().getMinLocation()) || area.containsLocation(k.getArea().getMinMaxLocation()) || area.containsLocation(k.getArea().getMaxMinLocation()) || area.containsLocation(k.getArea().getMaxMinLocation())) {
+                    kingdomCantBeCreated = true;
+                }
+            }
+
+            if ((area.getMaxMaxLocation().getBlockZ() - area.getMaxMinLocation().getBlockZ()) * (area.getMaxMaxLocation().getBlockX() - area.getMinMaxLocation().getBlockX()) > KingdomManager.getMaxBlocks()) {
+                if (Bukkit.getPlayer(owner) != null) {
+                    Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "Your Kingdom is too big!");
+                    if (Bukkit.getPlayer(owner).isOp()) {
+                        Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "You can change how big a Kingdom can be with /kingdom settings setmaxblocks <number>");
+                    }
+                    return;
+                }
+
+            }
         }
 
         if(Bukkit.getPlayer(owner) != null){
             Bukkit.getPlayer(owner).sendMessage(ChatColor.GREEN + "Kingdom created!");
         }
-
-        KingdomManager.getKingdomList().add(this);
-        calculateParticleLocation();
+        if(!dataload){
+            KingdomManager.getKingdomList().add(this);
+            calculateParticleLocation();
+        }
         spawnParticles();
-
     }
 
     private void spawnParticles(){
@@ -286,6 +319,9 @@ public class Kingdom {
     }
     public ArrayList<Location> getParticleLocations() {
         return ParticleLocations;
+    }
+    public int getRunnableId(){
+        return particleRunnableId;
     }
 
     public void openSettingsGui(Player player){
