@@ -1,6 +1,7 @@
 <h1>Better you SMP experience with this Plugin. It is designed to solve griefing problems. Create Kingdoms to build without having to worry about stealing or that people destroy what you build!</h1>
 
-Dowload the jar <a href="https://www.spigotmc.org/resources/kingdoms-plugin.95892/">here</a>
+Dowload the jar 
+<a href="https://www.spigotmc.org/resources/kingdoms-plugin.95892/">here</a>
 
 
 Features:
