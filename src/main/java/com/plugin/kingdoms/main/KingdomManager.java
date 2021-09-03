@@ -1,6 +1,5 @@
 package com.plugin.kingdoms.main;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -13,13 +12,13 @@ import java.util.UUID;
 
 public class KingdomManager {
 
-    private static ArrayList<Kingdom> kingdomList;
-    private static ArrayList<Kingdom> unfinishedKingdomList;
-    private static HashMap<UUID, Kingdom> playersInKingdoms;
-    private static int maxBlocks;
+    private ArrayList<Kingdom> kingdomList;
+    private ArrayList<Kingdom> unfinishedKingdomList;
+    private HashMap<UUID, Kingdom> playersInKingdoms;
+    private int maxBlocks;
 
-    private static File datafile;
-    private static YamlConfiguration changeDataFile;
+    private File datafile;
+    private YamlConfiguration changeDataFile;
 
     public KingdomManager() throws IOException {
         kingdomList = new ArrayList<>();
@@ -28,7 +27,7 @@ public class KingdomManager {
         maxBlocks = 500000;
 
 
-        datafile = new File(Bukkit.getServer().getPluginManager().getPlugin("KingdomsPlugin").getDataFolder(), "data.yml");
+        datafile = new File(Kingdoms.getInstance().getDataFolder(), "data.yml");
         if(datafile.exists()){
             datafile.createNewFile();
         }
@@ -37,26 +36,26 @@ public class KingdomManager {
         changeDataFile.save(datafile);
     }
 
-    public static ArrayList<Kingdom> getKingdomList(){
+    public ArrayList<Kingdom> getKingdomList(){
         return kingdomList;
     }
 
-    public static ArrayList<Kingdom> getUnfinishedKingdomList(){
-        return unfinishedKingdomList;
+    public ArrayList<Kingdom> getUnfinishedKingdomList(){
+        return  unfinishedKingdomList;
     }
 
-    public static HashMap<UUID, Kingdom> getPlayersInKingdoms(){
-        return playersInKingdoms;
+    public HashMap<UUID, Kingdom> getPlayersInKingdoms(){
+        return  playersInKingdoms;
     }
 
-    public static int getMaxBlocks(){
+    public int getMaxBlocks(){
         return maxBlocks;
     }
-    public static void setMaxBlocks(int k){
+    public void setMaxBlocks(int k){
         maxBlocks = k;
     }
 
-    public static void safeData(){
+    public void safeData(){
 
         changeDataFile.set("maxblocks", maxBlocks);
         if(kingdomList.size() == 0){
@@ -109,7 +108,7 @@ public class KingdomManager {
         }
     }
 
-    public static void loadData(){
+    public void loadData(){
 
         kingdomList.clear();
         if(changeDataFile.getConfigurationSection("maxblocks") != null){

@@ -22,14 +22,14 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
             Player player = (Player) sender;
 
             if (args[0].equalsIgnoreCase("create")) {
-                for (Kingdom k : KingdomManager.getUnfinishedKingdomList()) {
+                for (Kingdom k : Kingdoms.getManager().getUnfinishedKingdomList()) {
                     if (k.getOwner().equals(player.getUniqueId())) {
                         player.sendMessage(ChatColor.RED + "You've already created a new Kingdom! Set the 2 Location first!");
                         return false;
                     }
                 }
                 Kingdom k = new Kingdom(player.getUniqueId());
-                KingdomManager.getUnfinishedKingdomList().add(k);
+                Kingdoms.getManager().getUnfinishedKingdomList().add(k);
                 player.sendMessage(ChatColor.GREEN + "Created a new Kingdom! Set the 2 Location via right clicking on blocks! You have 60 Seconds to do that!");
                 PlayerCreateKingdom(k);
             } else if(args[0].equalsIgnoreCase("help")){
@@ -47,13 +47,11 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
                 player.sendMessage(ChatColor.YELLOW + "  -/kingdom settings deleteall- Delete all Kingdoms!");
                 player.sendMessage(ChatColor.YELLOW + "-/kingdom create- Create a Kingdom with 2 right clicks");
 
-
-
             } else if (args[0].equalsIgnoreCase("settings")) {
                 if(args.length == 3 && args[1].equalsIgnoreCase("setmaxblocks")){
                     if(player.isOp()) {
                         try {
-                            KingdomManager.setMaxBlocks(Integer.parseInt(args[2]));
+                            Kingdoms.getManager().setMaxBlocks(Integer.parseInt(args[2]));
                             player.sendMessage(ChatColor.GREEN + "Max size of a Kingdom is now " + args[2]);
                         } catch (NumberFormatException x) {
                             player.sendMessage(ChatColor.RED + "Invalid Argument! Please pass a Number!");
@@ -65,28 +63,28 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
                 }
                 if(args.length == 2 && args[1].equalsIgnoreCase("deleteall")){
                     if(player.isOp()){
-                        for(Kingdom y : KingdomManager.getKingdomList()){
+                        for(Kingdom y : Kingdoms.getManager().getKingdomList()){
                             Bukkit.getScheduler().cancelTask(y.getRunnableId());
                         }
-                        KingdomManager.getKingdomList().clear();
+                        Kingdoms.getManager().getKingdomList().clear();
                         player.sendMessage(ChatColor.GREEN + "Deleted all Kingdoms! There is no way to reverse this Action!");
 
-                        KingdomManager.safeData();
+                        Kingdoms.getManager().safeData();
 
                     }else{
                         player.sendMessage(ChatColor.RED + "You don't have the right to use this command!");
                     }
                     return  false;
                 }
-                if (KingdomManager.getPlayersInKingdoms().containsKey(player.getUniqueId())) {
-                    Kingdom k = KingdomManager.getPlayersInKingdoms().get(player.getUniqueId());
+                if (Kingdoms.getManager().getPlayersInKingdoms().containsKey(player.getUniqueId())) {
+                    Kingdom k = Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId());
 
                     if(args.length == 2 && args[1].equalsIgnoreCase("delete")){
                         if(player.isOp() || k.getOwner().equals(player.getUniqueId())){
-                            KingdomManager.getKingdomList().remove(k);
+                            Kingdoms.getManager().getKingdomList().remove(k);
                             Bukkit.getScheduler().cancelTask(k.getRunnableId());
                             player.sendMessage(ChatColor.GREEN + "Deleted Kingdom! There is no way to reverse this Action!");
-                            KingdomManager.safeData();
+                            Kingdoms.getManager().safeData();
                         }else{
                             player.sendMessage(ChatColor.RED + "You don't have the right to use this command!");
                         }
@@ -238,14 +236,14 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
 
     private void PlayerCreateKingdom(Kingdom k){
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Kingdoms.getInstance(), new Runnable() {
             @Override
             public void run() {
-                if(KingdomManager.getUnfinishedKingdomList().contains(k)){
+                if(Kingdoms.getManager().getUnfinishedKingdomList().contains(k)){
                     if(Bukkit.getPlayer(k.getOwner()) != null){
                         Bukkit.getPlayer(k.getOwner()).sendMessage(ChatColor.RED + "You didnt create a Kingdom because you ran out of time!");
                     }
-                    KingdomManager.getUnfinishedKingdomList().removeIf(k2 -> k2.getOwner().equals(k.getOwner()));
+                    Kingdoms.getManager().getUnfinishedKingdomList().removeIf(k2 -> k2.getOwner().equals(k.getOwner()));
                 }
             }
         }, 1200);

@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.sun.istack.internal.NotNull;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -87,6 +88,14 @@ public class Utils {
         stack.setItemMeta(meta);
         return stack;
 
+    }
+
+    public static ItemStack giveActivatedItem(){
+        return itemBuilder(Material.LIME_DYE, 1, ChatColor.GREEN + "Activated", null, null);
+    }
+
+    public static ItemStack giveDeactivatedItem(){
+        return Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null);
     }
 }
 

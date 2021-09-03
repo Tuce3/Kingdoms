@@ -1,6 +1,6 @@
 name: KingdomsPlugin
 version: ${project.version}
-main: com.plugin.kingdoms.main.Main
+main: com.plugin.kingdoms.main.Kingdoms
 api-version: 1.16
 commands:
   kingdom:

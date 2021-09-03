@@ -5,16 +5,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 
-public final class Main extends JavaPlugin {
+public final class Kingdoms extends JavaPlugin {
 
-    private static Main instance;
+    private static Kingdoms instance;
+    private static KingdomManager manager;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
 
         try {
-            new KingdomManager();
+            manager = new KingdomManager();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -24,12 +25,12 @@ public final class Main extends JavaPlugin {
 
         instance = this;
 
-        KingdomManager.loadData();
+        Kingdoms.getManager().loadData();
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
-                KingdomManager.safeData();
+                Kingdoms.getManager().safeData();
             }
         }, 400, 600);
 
@@ -38,10 +39,14 @@ public final class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        KingdomManager.safeData();
+        Kingdoms.getManager().safeData();
+        instance = null;
     }
 
-    public static Main getInstance(){
+    public static Kingdoms getInstance(){
         return instance;
+    }
+    public static KingdomManager getManager(){
+        return  manager;
     }
 }

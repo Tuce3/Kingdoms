@@ -5,6 +5,7 @@ import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -21,11 +22,35 @@ import org.bukkit.inventory.EquipmentSlot;
 
 public class KingdomListener implements Listener {
 
+    private void checkAllowed(int settings, Cancellable c, Player p, Kingdom k){
+        if(k.getAdmins().contains(p.getUniqueId())){
+            if(settings == 4){
+                c.setCancelled(true);
+                p.sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
+            }
+        }else if(k.getOwner().equals(p.getUniqueId())){
+            if(settings > 4){
+                c.setCancelled(true);
+                p.sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
+            }
+        }else if(k.getMembers().contains(p.getUniqueId())){
+            if(settings > 2){
+                c.setCancelled(true);
+                p.sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
+            }
+        }else{
+            if(settings > 1){
+                c.setCancelled(true);
+                p.sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
+            }
+        }
+    }
+
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e){
         if(e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.HAND){
-            for(int i = 0; i<KingdomManager.getUnfinishedKingdomList().size(); i++){
-                Kingdom k = KingdomManager.getUnfinishedKingdomList().get(i);
+            for(int i = 0; i< Kingdoms.getManager().getUnfinishedKingdomList().size(); i++){
+                Kingdom k = Kingdoms.getManager().getUnfinishedKingdomList().get(i);
                 if(k.getOwner().equals(e.getPlayer().getUniqueId())){
                     if(k.getMinLocation() == null){
                         k.setMinLocation(e.getClickedBlock().getLocation(), false);
@@ -36,29 +61,9 @@ public class KingdomListener implements Listener {
             }
         }
 
-        for(Kingdom k : KingdomManager.getKingdomList()){
+        for(Kingdom k : Kingdoms.getManager().getKingdomList()){
             if(k.getArea().containsLocation(e.getPlayer().getLocation()) || (e.getClickedBlock() != null && k.getArea().containsLocation(e.getClickedBlock().getLocation()))){
-                if(k.getAdmins().contains(e.getPlayer().getUniqueId())){
-                    if(k.getInteract() == 4){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else if(k.getOwner().equals(e.getPlayer().getUniqueId())){
-                    if(k.getInteract() > 4){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else if(k.getMembers().contains(e.getPlayer().getUniqueId())){
-                    if(k.getInteract() > 2){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else{
-                    if(k.getInteract() > 1){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }
+                checkAllowed(k.getInteract(), e,e.getPlayer(), k);
             }
         }
     }
@@ -70,12 +75,12 @@ public class KingdomListener implements Listener {
         Kingdom kingdomPlayerIsInNow = null;
         Player player = e.getPlayer();
 
-        if(KingdomManager.getPlayersInKingdoms().containsKey(e.getPlayer().getUniqueId())){
-            kingdomPlayerIsIn = KingdomManager.getPlayersInKingdoms().get(e.getPlayer().getUniqueId());
+        if(Kingdoms.getManager().getPlayersInKingdoms().containsKey(e.getPlayer().getUniqueId())){
+            kingdomPlayerIsIn = Kingdoms.getManager().getPlayersInKingdoms().get(e.getPlayer().getUniqueId());
         }
 
-        for(int i = 0; i<KingdomManager.getKingdomList().size(); i++){
-            Kingdom k = KingdomManager.getKingdomList().get(i);
+        for(int i = 0; i< Kingdoms.getManager().getKingdomList().size(); i++){
+            Kingdom k = Kingdoms.getManager().getKingdomList().get(i);
             boolean isAllowed = true;
             if(k.getAdmins().contains(player.getUniqueId())){
                 if(k.getEnterKingdom() == 4){
@@ -119,11 +124,11 @@ public class KingdomListener implements Listener {
 
         if(kingdomPlayerIsIn != null || kingdomPlayerIsInNow != null){
             if(kingdomPlayerIsIn == null && kingdomPlayerIsInNow != null){
-                KingdomManager.getPlayersInKingdoms().put(e.getPlayer().getUniqueId(), kingdomPlayerIsInNow);
+                Kingdoms.getManager().getPlayersInKingdoms().put(e.getPlayer().getUniqueId(), kingdomPlayerIsInNow);
                 e.getPlayer().sendTitle(ChatColor.AQUA + "You entered a Kingdom", ChatColor.AQUA + "of " + ChatColor.AQUA + Bukkit.getOfflinePlayer(kingdomPlayerIsInNow.getOwner()).getName(), 10, 80, 10);
             }else if(kingdomPlayerIsIn != null && kingdomPlayerIsInNow == null){
                 e.getPlayer().sendTitle(ChatColor.AQUA + "You left a Kingdom of", ChatColor.AQUA + Bukkit.getOfflinePlayer(kingdomPlayerIsIn.getOwner()).getName(), 10, 80, 10);
-                KingdomManager.getPlayersInKingdoms().remove(e.getPlayer().getUniqueId());
+                Kingdoms.getManager().getPlayersInKingdoms().remove(e.getPlayer().getUniqueId());
             }
 
         }
@@ -138,8 +143,8 @@ public class KingdomListener implements Listener {
         if(e.getView().getTitle().contains(ChatColor.GOLD+ "settings") || e.getView().getTitle().contains("settings")){
             e.setCancelled(true);
 
-            if(KingdomManager.getPlayersInKingdoms().containsKey(player.getUniqueId())) {
-                Kingdom k = KingdomManager.getPlayersInKingdoms().get(player.getUniqueId());
+            if(Kingdoms.getManager().getPlayersInKingdoms().containsKey(player.getUniqueId())) {
+                Kingdom k = Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId());
                 if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "settings")){
                     if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BARRIER, 1, ChatColor.GOLD + "Settings", null, ChatColor.DARK_GREEN + "Manage who can change", ChatColor.DARK_GREEN + "settings"))) {
                         k.openAccessSettingsGui(player);
@@ -163,7 +168,7 @@ public class KingdomListener implements Listener {
                         k.openEnterKingdom(player);
                     }
                 }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"access settings")) {
-                    if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null))) {
+                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
                         if (e.getRawSlot() == 19) {
                             k.setSettings(1);
                         } else if (e.getRawSlot() == 21) {
@@ -187,7 +192,7 @@ public class KingdomListener implements Listener {
                         k.openAddMembers(player);
                     }
                 }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"remove members settings")){
-                    if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null))) {
+                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
                         if (e.getRawSlot() == 19) {
                             k.setRemoveMembers(1);
                         } else if (e.getRawSlot() == 21) {
@@ -201,7 +206,7 @@ public class KingdomListener implements Listener {
                         k.openRemMembers(player);
                     }
                 }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"add members settings")){
-                    if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null))) {
+                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
                         if (e.getRawSlot() == 19) {
                             k.setAddMembers(1);
                         } else if (e.getRawSlot() == 21) {
@@ -215,7 +220,7 @@ public class KingdomListener implements Listener {
                         k.openAddMembers(player);
                     }
                 }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"remove admins settings")){
-                    if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null))) {
+                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
                         if (e.getRawSlot() == 19) {
                             k.setRemoveAdmins(1);
                         } else if (e.getRawSlot() == 21) {
@@ -229,7 +234,7 @@ public class KingdomListener implements Listener {
                         k.openRemAdmins(player);
                     }
                 }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"add admins settings")){
-                    if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null))) {
+                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
                         if (e.getRawSlot() == 19) {
                             k.setAddAdmins(1);
                         } else if (e.getRawSlot() == 21) {
@@ -243,7 +248,7 @@ public class KingdomListener implements Listener {
                         k.openAddAdmins(player);
                     }
                 }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"Particle settings")){
-                    if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null))) {
+                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
                         if (e.getRawSlot() == 11) {
                             k.setParticleType(Particle.VILLAGER_HAPPY);
                             k.setParticleAmount(2);
@@ -264,7 +269,7 @@ public class KingdomListener implements Listener {
                     }
                 }else if(e.getView().getTitle().equals(ChatColor.GOLD + "TnT settings")){
 
-                    if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null))) {
+                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
                         if (e.getRawSlot() == 14) {
                             k.setTnTActive(false);
                         } else if (e.getRawSlot() == 12) {
@@ -294,7 +299,7 @@ public class KingdomListener implements Listener {
                         k.openSeeMembers(player, Integer.parseInt(e.getCurrentItem().getItemMeta().getLocalizedName())-1);
                     }
                 }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"Block settings")){
-                    if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null))) {
+                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
 
                         if (e.getRawSlot() == 19) {
                             k.setDestroyBlocks(1);
@@ -308,7 +313,7 @@ public class KingdomListener implements Listener {
                         k.openDestroyPlaceBlocks(player);
                     }
                 }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"Interact settings")){
-                    if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null))) {
+                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
 
                         if (e.getRawSlot() == 19) {
                             k.setInteract(1);
@@ -322,7 +327,7 @@ public class KingdomListener implements Listener {
                         k.openInteractInventory(player);
                     }
                 }else if(e.getView().getTitle().equals(ChatColor.GOLD + "PvP settings")){
-                    if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null))) {
+                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
 
                         if (e.getRawSlot() == 19) {
                             k.setPvP(1);
@@ -344,7 +349,7 @@ public class KingdomListener implements Listener {
                     }
 
                 }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Invulnerable Pets settings")){
-                    if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null))) {
+                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
                         if (e.getRawSlot() == 12) {
                             k.setInvulerablePets(true);
                         } else if (e.getRawSlot() == 14) {
@@ -355,7 +360,7 @@ public class KingdomListener implements Listener {
                     }
 
                 }else if(e.getView().getTitle().equals(ChatColor.GOLD + "Damage Pets settings")){
-                    if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null))) {
+                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
 
                         if (e.getRawSlot() == 19) {
                             k.setDamagePets(1);
@@ -369,7 +374,7 @@ public class KingdomListener implements Listener {
                         k.openDamagePetsInventory(player);
                     }
                 }else if(e.getView().getTitle().equals(ChatColor.GOLD + "Enter Kingdom settings")){
-                    if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null))) {
+                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
 
                         if (e.getRawSlot() == 19) {
                             k.setEnterKingdom(1);
@@ -390,7 +395,7 @@ public class KingdomListener implements Listener {
 
     @EventHandler
     public void onTnTExplode(EntityExplodeEvent e){
-        for(Kingdom k : KingdomManager.getKingdomList()){
+        for(Kingdom k : Kingdoms.getManager().getKingdomList()){
             if(k.getArea().containsLocation(e.getLocation())){
                 if(!k.getTnTActive()){
                     e.setCancelled(true);
@@ -401,58 +406,18 @@ public class KingdomListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e){
-        for(Kingdom k : KingdomManager.getKingdomList()){
+        for(Kingdom k : Kingdoms.getManager().getKingdomList()){
             if(k.getArea().containsLocation(e.getBlock().getLocation())){
-                if(k.getAdmins().contains(e.getPlayer().getUniqueId())){
-                    if(k.getDestroyBlocks() == 4){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else if(k.getMembers().contains(e.getPlayer().getUniqueId())){
-                    if(k.getDestroyBlocks() > 2){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else if(k.getOwner().equals(e.getPlayer().getUniqueId())){
-                    if(k.getInteract() > 4){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else{
-                    if(k.getDestroyBlocks() > 1){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }
+                checkAllowed(k.getDestroyBlocks(), e,e.getPlayer(), k);
             }
         }
     }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e){
-        for(Kingdom k : KingdomManager.getKingdomList()){
+        for(Kingdom k : Kingdoms.getManager().getKingdomList()){
             if(k.getArea().containsLocation(e.getBlock().getLocation())){
-                if(k.getAdmins().contains(e.getPlayer().getUniqueId())){
-                    if(k.getDestroyBlocks() == 4){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else if(k.getMembers().contains(e.getPlayer().getUniqueId())){
-                    if(k.getDestroyBlocks() > 2){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else if(k.getOwner().equals(e.getPlayer().getUniqueId())){
-                    if(k.getInteract() > 4){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else{
-                    if(k.getDestroyBlocks() > 1){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }
+                checkAllowed(k.getDestroyBlocks(), e,e.getPlayer(), k);
             }
         }
     }
@@ -460,29 +425,9 @@ public class KingdomListener implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e){
 
-        for(Kingdom k : KingdomManager.getKingdomList()){
+        for(Kingdom k : Kingdoms.getManager().getKingdomList()){
             if(k.getArea().containsLocation(e.getPlayer().getLocation()) || k.getArea().containsLocation(e.getRightClicked().getLocation())){
-                if(k.getAdmins().contains(e.getPlayer().getUniqueId())){
-                    if(k.getInteract() == 4){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else if(k.getMembers().contains(e.getPlayer().getUniqueId())){
-                    if(k.getInteract() > 2){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else if(k.getOwner().equals(e.getPlayer().getUniqueId())){
-                    if(k.getInteract() > 4){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else{
-                    if(k.getInteract() > 1){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }
+                checkAllowed(k.getInteract(), e,e.getPlayer(), k);
             }
         }
 
@@ -491,29 +436,9 @@ public class KingdomListener implements Listener {
     @EventHandler
     public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent e){
 
-        for(Kingdom k : KingdomManager.getKingdomList()){
+        for(Kingdom k : Kingdoms.getManager().getKingdomList()){
             if(k.getArea().containsLocation(e.getPlayer().getLocation()) || k.getArea().containsLocation(e.getRightClicked().getLocation())){
-                if(k.getAdmins().contains(e.getPlayer().getUniqueId())){
-                    if(k.getInteract() == 4){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else if(k.getMembers().contains(e.getPlayer().getUniqueId())){
-                    if(k.getInteract() > 2){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else if(k.getOwner().equals(e.getPlayer().getUniqueId())){
-                    if(k.getInteract() > 4){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }else{
-                    if(k.getInteract() > 1){
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                    }
-                }
+                checkAllowed(k.getInteract(), e,e.getPlayer(), k);
             }
         }
 
@@ -523,54 +448,14 @@ public class KingdomListener implements Listener {
     @EventHandler
     public void onPlayerPunchEntity(EntityDamageByEntityEvent e){
         if(e.getDamager().getType() == EntityType.PLAYER && e.getEntity().getType() != EntityType.PLAYER){
-            for(Kingdom k : KingdomManager.getKingdomList()){
+            for(Kingdom k : Kingdoms.getManager().getKingdomList()){
                 if(k.getArea().containsLocation(e.getDamager().getLocation()) || k.getArea().containsLocation(e.getEntity().getLocation())){
-                    if(k.getAdmins().contains(e.getDamager().getUniqueId())){
-                        if(k.getInteract() == 4){
-                            e.setCancelled(true);
-                            e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                        }
-                    }else if(k.getMembers().contains(e.getDamager().getUniqueId())){
-                        if(k.getInteract() > 2){
-                            e.setCancelled(true);
-                            e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                        }
-                    }else if(k.getOwner().equals(e.getDamager().getUniqueId())){
-                        if(k.getInteract() > 4){
-                            e.setCancelled(true);
-                            e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                        }
-                    }else{
-                        if(k.getInteract() > 1){
-                            e.setCancelled(true);
-                            e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                        }
-                    }
+                    checkAllowed(k.getInteract(), e,(Player) e.getDamager(), k);
                 }if(k.getArea().containsLocation(e.getEntity().getLocation())){
                     if(e.getEntity() instanceof Tameable) {
                         Tameable t = (Tameable) e.getEntity();
                         if(t.isTamed()) {
-                            if (k.getAdmins().contains(e.getDamager().getUniqueId())) {
-                                if (k.getHitPets() == 4 && k.getPetInvulerable()) {
-                                    e.setCancelled(true);
-                                    e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                                }
-                            } else if (k.getMembers().contains(e.getDamager().getUniqueId())) {
-                                if (k.getHitPets() > 2 && k.getPetInvulerable()) {
-                                    e.setCancelled(true);
-                                    e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                                }
-                            } else if (k.getOwner().equals(e.getDamager().getUniqueId())) {
-                                if (k.getHitPets() > 4 && k.getPetInvulerable()) {
-                                    e.setCancelled(true);
-                                    e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                                }
-                            } else {
-                                if (k.getHitPets() > 1 && k.getPetInvulerable()) {
-                                    e.setCancelled(true);
-                                    e.getDamager().sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
-                                }
-                            }
+                            checkAllowed(k.getHitPets(), e,(Player) e.getDamager(), k);
                         }
                     }
 
@@ -581,25 +466,9 @@ public class KingdomListener implements Listener {
 
         if(e.getDamager().getType() == EntityType.PLAYER && e.getEntity().getType() == EntityType.PLAYER){
 
-            for(Kingdom k : KingdomManager.getKingdomList()){
+            for(Kingdom k : Kingdoms.getManager().getKingdomList()){
                 if(k.getArea().containsLocation(e.getDamager().getLocation()) || k.getArea().containsLocation(e.getEntity().getLocation())){
-                    if(k.getAdmins().contains(e.getDamager().getUniqueId())){
-                        if(k.getPvP() == 4){
-                            e.setCancelled(true);
-                        }
-                    }else if(k.getMembers().contains(e.getDamager().getUniqueId())){
-                        if(k.getPvP() > 2){
-                            e.setCancelled(true);
-                        }
-                    }else if(k.getOwner().equals(e.getDamager().getUniqueId())){
-                        if(k.getPvP() > 4){
-                            e.setCancelled(true);
-                        }
-                    }else{
-                        if(k.getPvP() > 1){
-                            e.setCancelled(true);
-                        }
-                    }
+                    checkAllowed(k.getPvP(), e,(Player) e.getDamager(), k);
                 }
             }
 
