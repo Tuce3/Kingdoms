@@ -376,29 +376,29 @@ public class Kingdom extends KingdomSettings{
 
 
         if(particleType != null && particleType == Particle.ASH){
-            gui.setItem(9, Utils.itemBuilder(Material.LIME_DYE, 1, ChatColor.GREEN + "Activated", null, null));
+            gui.setItem(9, KingdomInterface.activated);
         }else{
-            gui.setItem(9, Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null));
+            gui.setItem(9, KingdomInterface.deactivated);
         }
         if(particleType != null && particleType == Particle.VILLAGER_HAPPY){
-            gui.setItem(11, Utils.itemBuilder(Material.LIME_DYE, 1, ChatColor.GREEN + "Activated", null, null));
+            gui.setItem(11, KingdomInterface.activated);
         }else{
-            gui.setItem(11, Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null));
+            gui.setItem(11, KingdomInterface.deactivated);
         }
         if(particleType != null && particleType == Particle.FALLING_LAVA){
-            gui.setItem(13, Utils.itemBuilder(Material.LIME_DYE, 1, ChatColor.GREEN + "Activated", null, null));
+            gui.setItem(13, KingdomInterface.activated);
         }else{
-            gui.setItem(13, Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null));
+            gui.setItem(13, KingdomInterface.deactivated);
         }
         if(particleType != null && particleType == Particle.FALLING_WATER){
-            gui.setItem(15, Utils.itemBuilder(Material.LIME_DYE, 1, ChatColor.GREEN + "Activated", null, null));
+            gui.setItem(15, KingdomInterface.activated);
         }else{
-            gui.setItem(15, Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null));
+            gui.setItem(15, KingdomInterface.deactivated);
         }
         if(particleType == null){
-            gui.setItem(17, Utils.itemBuilder(Material.LIME_DYE, 1, ChatColor.GREEN + "Activated", null, null));
+            gui.setItem(17, KingdomInterface.activated);
         }else{
-            gui.setItem(17, Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null));
+            gui.setItem(17, KingdomInterface.deactivated);
         }
 
         player.openInventory(gui);

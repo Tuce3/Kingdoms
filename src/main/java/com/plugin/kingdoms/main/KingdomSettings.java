@@ -66,7 +66,8 @@ public class KingdomSettings implements KingdomInterface{
          this.settings = settings;
          this.destroyBlocks = destroyBlocks;
          this.interact = interact;
-
+        this.activated = KingdomInterface.activated;
+        this.deactivated = KingdomInterface.deactivated;
 
 
     }
@@ -148,36 +149,17 @@ public class KingdomSettings implements KingdomInterface{
     public void openSettingsGui(Player player){
         Inventory gui = Bukkit.createInventory(null, 36, ChatColor.GOLD + "settings");
 
-        ItemStack viewMembers = Utils.itemBuilder(Material.PLAYER_HEAD, 1, ChatColor.GOLD + "View Members and Admins", null, null);
 
-        ItemStack accessSettings = Utils.itemBuilder(Material.BARRIER, 1, ChatColor.GOLD + "Settings", null, ChatColor.DARK_GREEN + "Manage who can change", ChatColor.DARK_GREEN + "settings");
-
-        ItemStack destroyBlocks = Utils.itemBuilder(Material.COBBLESTONE, 1, ChatColor.GOLD + "Destroy/place Blocks", null, ChatColor.DARK_GREEN + "Manage who can place/destroy blocks");
-
-        ItemStack Pvp = Utils.itemBuilder(Material.WOODEN_SWORD, 1, ChatColor.GOLD+"PvP settings", null, ChatColor.DARK_GREEN + "Manage who can PvP");
-
-        ItemStack addremoveadminsmembers = Utils.itemBuilder(Material.SKELETON_SKULL, 1, ChatColor.GOLD+"Remove/add roles", null, ChatColor.DARK_GREEN + "Manage who can add/remove", ChatColor.DARK_GREEN + "Admin and Member rights");
-
-        ItemStack enterKingdom = Utils.itemBuilder(Material.LEATHER_BOOTS, 1, ChatColor.GOLD + "Access settings", null, ChatColor.DARK_GREEN +"Change who can ", ChatColor.DARK_GREEN +"enter the kingdom");
-
-        ItemStack TnT = Utils.itemBuilder(Material.TNT, 1, ChatColor.GOLD + "TnT", null, ChatColor.DARK_GREEN + "Manage if TnT should explode");
-
-        ItemStack particleColor = Utils.itemBuilder(Material.LIME_DYE, 1, ChatColor.GOLD + "Particle Color", null, ChatColor.DARK_GREEN + "Change the Particle Color");
-
-        ItemStack invulnerablePets = Utils.itemBuilder(Material.NAME_TAG, 1, ChatColor.GOLD + "Pets", null, ChatColor.DARK_GREEN + "Manage Pets");
-
-        ItemStack interact = Utils.itemBuilder(Material.SPRUCE_SIGN, 1, ChatColor.GOLD + "Interact", null, ChatColor.DARK_GREEN + "Manage who can ", ChatColor.DARK_GREEN + "Right click and hit Mobs");
-
-        gui.setItem(4, accessSettings);
-        gui.setItem(10, viewMembers);
-        gui.setItem(13, interact);
-        gui.setItem(16, destroyBlocks);
-        gui.setItem(19, Pvp);
-        gui.setItem(22, invulnerablePets);
-        gui.setItem(25, particleColor);
-        gui.setItem(28, addremoveadminsmembers);
-        gui.setItem(31, enterKingdom);
-        gui.setItem(34, TnT);
+        gui.setItem(4, KingdomInterface.accessSettings);
+        gui.setItem(10, KingdomInterface.viewMembers);
+        gui.setItem(13, KingdomInterface.interactSettings);
+        gui.setItem(16, KingdomInterface.blockSettings);
+        gui.setItem(19, KingdomInterface.Pvp);
+        gui.setItem(22, KingdomInterface.invulnerablePets);
+        gui.setItem(25, KingdomInterface.particleColor);
+        gui.setItem(28, KingdomInterface.addremoveadminsmembers);
+        gui.setItem(31, KingdomInterface.enterKingdomSettings);
+        gui.setItem(34, KingdomInterface.TnT);
 
         player.openInventory(gui);
 
@@ -263,11 +245,11 @@ public class KingdomSettings implements KingdomInterface{
         gui.setItem(5, Utils.itemBuilder(Material.RED_DYE, 1, ChatColor.GREEN + "Deactivate", null, null));
 
         if(TnTActive){
-            gui.setItem(12, Utils.itemBuilder(Material.LIME_DYE, 1, ChatColor.GREEN + "Activated", null, null));
-            gui.setItem(14, Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null));
+            gui.setItem(12, activated);
+            gui.setItem(14, deactivated);
         }else{
-            gui.setItem(14, Utils.itemBuilder(Material.LIME_DYE, 1, ChatColor.GREEN + "Activated", null, null));
-            gui.setItem(12, Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null));
+            gui.setItem(14, activated);
+            gui.setItem(12, deactivated);
         }
 
         player.openInventory(gui);
@@ -285,7 +267,6 @@ public class KingdomSettings implements KingdomInterface{
         player.openInventory(gui);
 
     }
-
 
     public void openDestroyPlaceBlocks(Player player){
 
@@ -349,12 +330,12 @@ public class KingdomSettings implements KingdomInterface{
         if(invulerablePets){
             gui.setItem(12, activated);
         }else{
-            gui.setItem(12, Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null));
+            gui.setItem(12, deactivated);
         }
         if(!invulerablePets){
             gui.setItem(14, activated);
         }else{
-            gui.setItem(14, Utils.itemBuilder(Material.BLACK_CONCRETE, 1, ChatColor.GREEN + "Deactivated", null, null));
+            gui.setItem(14, deactivated);
         }
 
         player.openInventory(gui);

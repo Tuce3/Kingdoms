@@ -14,6 +14,8 @@ public final class Kingdoms extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
 
+        instance = this;
+
         try {
             manager = new KingdomManager();
         } catch (IOException e) {
@@ -22,8 +24,6 @@ public final class Kingdoms extends JavaPlugin {
         getCommand("kingdom").setExecutor(new KingdomCommand());
         getCommand("kingdom").setTabCompleter(new KingdomCommand());
         Bukkit.getPluginManager().registerEvents(new KingdomListener(), this);
-
-        instance = this;
 
         Kingdoms.getManager().loadData();
 
@@ -39,7 +39,7 @@ public final class Kingdoms extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        Kingdoms.getManager().safeData();
+        manager.safeData();
         instance = null;
     }
 

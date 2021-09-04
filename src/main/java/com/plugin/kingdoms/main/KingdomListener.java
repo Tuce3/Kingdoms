@@ -1,6 +1,5 @@
 package com.plugin.kingdoms.main;
 
-import com.plugin.kingdoms.main.Utils.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -44,6 +43,19 @@ public class KingdomListener implements Listener {
                 p.sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
             }
         }
+    }
+
+    private int checkSlot(int rawSlot){
+        if (rawSlot == 19) {
+            return 1;
+        } else if (rawSlot == 21) {
+            return 2;
+        } else if (rawSlot == 23) {
+            return 3;
+        } else if (rawSlot == 25) {
+            return 4;
+        }
+        return rawSlot;
     }
 
     @EventHandler
@@ -140,258 +152,149 @@ public class KingdomListener implements Listener {
 
         Player player = (Player) e.getWhoClicked();
 
-        if(e.getView().getTitle().contains(ChatColor.GOLD+ "settings") || e.getView().getTitle().contains("settings")){
-            e.setCancelled(true);
+        if(!e.getView().getTitle().contains(ChatColor.GOLD+ "settings") && !e.getView().getTitle().contains("settings")) return;
 
-            if(Kingdoms.getManager().getPlayersInKingdoms().containsKey(player.getUniqueId())) {
-                Kingdom k = Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId());
-                if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "settings")){
-                    if (e.getCurrentItem().equals(Utils.itemBuilder(Material.BARRIER, 1, ChatColor.GOLD + "Settings", null, ChatColor.DARK_GREEN + "Manage who can change", ChatColor.DARK_GREEN + "settings"))) {
-                        k.openAccessSettingsGui(player);
-                    }else if(e.getCurrentItem().equals(Utils.itemBuilder(Material.SKELETON_SKULL, 1, ChatColor.GOLD+"Remove/add roles", null, ChatColor.DARK_GREEN + "Manage who can add/remove", ChatColor.DARK_GREEN + "Admin and Member rights"))){
-                        k.openAddRemoveMembersAdmins(player);
-                    }else if(e.getCurrentItem().equals(Utils.itemBuilder(Material.LIME_DYE, 1, ChatColor.GOLD + "Particle Color", null, ChatColor.DARK_GREEN + "Change the Particle Color"))){
-                        k.openBorderParticleColor(player);
-                    }else if(e.getCurrentItem().equals(Utils.itemBuilder(Material.TNT, 1, ChatColor.GOLD + "TnT", null, ChatColor.DARK_GREEN + "Manage if TnT should explode"))){
-                        k.openTnT(player);
-                    }else if(e.getCurrentItem().equals(Utils.itemBuilder(Material.PLAYER_HEAD, 1, ChatColor.GOLD + "View Members and Admins", null, null))){
-                        k.openSeeAdminsMembers(player);
-                    }else if(e.getCurrentItem().equals(Utils.itemBuilder(Material.COBBLESTONE, 1, ChatColor.GOLD + "Destroy/place Blocks", null, ChatColor.DARK_GREEN + "Manage who can place/destroy blocks"))){
-                        k.openDestroyPlaceBlocks(player);
-                    }else if(e.getCurrentItem().equals(Utils.itemBuilder(Material.SPRUCE_SIGN, 1, ChatColor.GOLD + "Interact", null, ChatColor.DARK_GREEN + "Manage who can ", ChatColor.DARK_GREEN + "Right click and hit Mobs"))){
-                        k.openInteractInventory(player);
-                    }else if(e.getCurrentItem().equals(Utils.itemBuilder(Material.WOODEN_SWORD, 1, ChatColor.GOLD+"PvP settings", null, ChatColor.DARK_GREEN + "Manage who can PvP"))){
-                        k.openPvPInventory(player);
-                    }else if(e.getCurrentItem().equals(Utils.itemBuilder(Material.NAME_TAG, 1, ChatColor.GOLD + "Pets", null, ChatColor.DARK_GREEN + "Manage Pets"))){
-                        k.openPetInventory(player);
-                    }else if(e.getCurrentItem().equals(Utils.itemBuilder(Material.LEATHER_BOOTS, 1, ChatColor.GOLD + "Access settings", null, ChatColor.DARK_GREEN +"Change who can ", ChatColor.DARK_GREEN +"enter the kingdom"))){
-                        k.openEnterKingdom(player);
-                    }
-                }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"access settings")) {
-                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
-                        if (e.getRawSlot() == 19) {
-                            k.setSettings(1);
-                        } else if (e.getRawSlot() == 21) {
-                            k.setSettings(2);
-                        } else if (e.getRawSlot() == 23) {
-                            k.setSettings(3);
-                        } else if (e.getRawSlot() == 25) {
-                            k.setSettings(4);
-                        }
+        e.setCancelled(true);
 
-                        k.openAccessSettingsGui(player);
-                    }
-                }else if(e.getView().getTitle().equals(ChatColor.GOLD  + "Add and remove settings")){
-                    if(e.getRawSlot() == 1){
-                        k.openAddAdmins(player);
-                    }else if(e.getRawSlot() == 3){
-                        k.openRemAdmins(player);
-                    }else if(e.getRawSlot() == 5){
-                        k.openRemMembers(player);
-                    }else if(e.getRawSlot() == 7){
-                        k.openAddMembers(player);
-                    }
-                }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"remove members settings")){
-                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
-                        if (e.getRawSlot() == 19) {
-                            k.setRemoveMembers(1);
-                        } else if (e.getRawSlot() == 21) {
-                            k.setRemoveMembers(2);
-                        } else if (e.getRawSlot() == 23) {
-                            k.setRemoveMembers(3);
-                        } else if (e.getRawSlot() == 25) {
-                            k.setRemoveMembers(4);
-                        }
+        if(!Kingdoms.getManager().getPlayersInKingdoms().containsKey(player.getUniqueId())) return;
 
-                        k.openRemMembers(player);
-                    }
-                }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"add members settings")){
-                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
-                        if (e.getRawSlot() == 19) {
-                            k.setAddMembers(1);
-                        } else if (e.getRawSlot() == 21) {
-                            k.setAddMembers(2);
-                        } else if (e.getRawSlot() == 23) {
-                            k.setAddMembers(3);
-                        } else if (e.getRawSlot() == 25) {
-                            k.setAddMembers(4);
-                        }
+        Kingdom k = Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId());
 
-                        k.openAddMembers(player);
-                    }
-                }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"remove admins settings")){
-                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
-                        if (e.getRawSlot() == 19) {
-                            k.setRemoveAdmins(1);
-                        } else if (e.getRawSlot() == 21) {
-                            k.setRemoveAdmins(2);
-                        } else if (e.getRawSlot() == 23) {
-                            k.setRemoveAdmins(3);
-                        } else if (e.getRawSlot() == 25) {
-                            k.setRemoveAdmins(4);
-                        }
+        if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "settings")){
+            if (e.getCurrentItem().equals(KingdomInterface.accessSettings)) {
+                k.openAccessSettingsGui(player);
+            }else if(e.getCurrentItem().equals(KingdomInterface.addremoveadminsmembers)){
+                k.openAddRemoveMembersAdmins(player);
+            }else if(e.getCurrentItem().equals(KingdomInterface.particleColor)){
+                k.openBorderParticleColor(player);
+            }else if(e.getCurrentItem().equals(KingdomInterface.TnT)){
+                k.openTnT(player);
+            }else if(e.getCurrentItem().equals(KingdomInterface.addremoveadminsmembers)){
+                k.openSeeAdminsMembers(player);
+            }else if(e.getCurrentItem().equals(KingdomInterface.blockSettings)){
+                k.openDestroyPlaceBlocks(player);
+            }else if(e.getCurrentItem().equals(KingdomInterface.interactSettings)){
+                k.openInteractInventory(player);
+            }else if(e.getCurrentItem().equals(KingdomInterface.Pvp)){
+                k.openPvPInventory(player);
+            }else if(e.getCurrentItem().equals(KingdomInterface.invulnerablePets)){
+                k.openPetInventory(player);
+            }else if(e.getCurrentItem().equals(KingdomInterface.enterKingdomSettings)){
+                k.openEnterKingdom(player);
+            }
+        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"access settings")) {
+            k.setSettings(checkSlot(e.getRawSlot()));
+            k.openAccessSettingsGui(player);
+        }else if(e.getView().getTitle().equals(ChatColor.GOLD  + "Add and remove settings")){
+            if(e.getRawSlot() == 1){
+                k.openAddAdmins(player);
+            }else if(e.getRawSlot() == 3){
+                k.openRemAdmins(player);
+            }else if(e.getRawSlot() == 5){
+                k.openRemMembers(player);
+            }else if(e.getRawSlot() == 7){
+                k.openAddMembers(player);
+            }
+        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"remove members settings")){
+            k.setRemoveMembers(checkSlot(e.getRawSlot()));
+            k.openRemMembers(player);
+        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"add members settings")){
+            k.setAddMembers(checkSlot(e.getRawSlot()));
+            k.openAddMembers(player);
+        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"remove admins settings")){
+            k.setRemoveAdmins(checkSlot(e.getRawSlot()));
+            k.openRemAdmins(player);
+        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"add admins settings")){
+            k.setAddAdmins(checkSlot(e.getRawSlot()));
+            k.openAddAdmins(player);
+        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"Particle settings")){
+            if (e.getRawSlot() == 11) {
+                k.setParticleType(Particle.VILLAGER_HAPPY);
+                k.setParticleAmount(2);
+            } else if (e.getRawSlot() == 13) {
+                k.setParticleType(Particle.FALLING_LAVA);
+                k.setParticleAmount(3);
+            } else if (e.getRawSlot() == 15) {
+                k.setParticleType(Particle.FALLING_WATER);
+                k.setParticleAmount(3);
+            } else if (e.getRawSlot() == 17) {
+                k.setParticleType(null);
+            }else if(e.getRawSlot() == 9){
+                k.setParticleType(Particle.ASH);
+                k.setParticleAmount(10);
+            }
 
-                        k.openRemAdmins(player);
-                    }
-                }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"add admins settings")){
-                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
-                        if (e.getRawSlot() == 19) {
-                            k.setAddAdmins(1);
-                        } else if (e.getRawSlot() == 21) {
-                            k.setAddAdmins(2);
-                        } else if (e.getRawSlot() == 23) {
-                            k.setAddAdmins(3);
-                        } else if (e.getRawSlot() == 25) {
-                            k.setAddAdmins(4);
-                        }
+            k.openBorderParticleColor(player);
 
-                        k.openAddAdmins(player);
-                    }
-                }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"Particle settings")){
-                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
-                        if (e.getRawSlot() == 11) {
-                            k.setParticleType(Particle.VILLAGER_HAPPY);
-                            k.setParticleAmount(2);
-                        } else if (e.getRawSlot() == 13) {
-                            k.setParticleType(Particle.FALLING_LAVA);
-                            k.setParticleAmount(3);
-                        } else if (e.getRawSlot() == 15) {
-                            k.setParticleType(Particle.FALLING_WATER);
-                            k.setParticleAmount(3);
-                        } else if (e.getRawSlot() == 17) {
-                            k.setParticleType(null);
-                        }else if(e.getRawSlot() == 9){
-                            k.setParticleType(Particle.ASH);
-                            k.setParticleAmount(10);
-                        }
+        }else if(e.getView().getTitle().equals(ChatColor.GOLD + "TnT settings")){
 
-                        k.openBorderParticleColor(player);
-                    }
-                }else if(e.getView().getTitle().equals(ChatColor.GOLD + "TnT settings")){
-
-                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
-                        if (e.getRawSlot() == 14) {
-                            k.setTnTActive(false);
-                        } else if (e.getRawSlot() == 12) {
-                            k.setTnTActive(true);
-                        }
-
-                        k.openTnT(player);
-                    }
-                }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Admins, Owner and Members settings")){
-                    if(e.getRawSlot() == 2){
-                        k.openSeeMembers(player, 1);
-                    }else if(e.getRawSlot() == 4){
-                        k.openSeeAdmins(player, 1);
-                    }else if(e.getRawSlot() == 6){
-                        k.openSeeOwner(player);
-                    }
-                }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Admins settings")){
-                    if(e.getCurrentItem().getType() == Material.TIPPED_ARROW && e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Next page")){
-                        k.openSeeAdmins(player, Integer.parseInt(e.getCurrentItem().getItemMeta().getLocalizedName())+1);
-                    }else if(e.getCurrentItem().getType() == Material.TIPPED_ARROW && e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Last page")){
-                        k.openSeeAdmins(player, Integer.parseInt(e.getCurrentItem().getItemMeta().getLocalizedName())-1);
-                    }
-                }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Members settings")){
-                    if(e.getCurrentItem().getType() == Material.TIPPED_ARROW && e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Next page")){
-                        k.openSeeMembers(player, Integer.parseInt(e.getCurrentItem().getItemMeta().getLocalizedName())+1);
-                    }else if(e.getCurrentItem().getType() == Material.TIPPED_ARROW && e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Last page")){
-                        k.openSeeMembers(player, Integer.parseInt(e.getCurrentItem().getItemMeta().getLocalizedName())-1);
-                    }
-                }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"Block settings")){
-                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
-
-                        if (e.getRawSlot() == 19) {
-                            k.setDestroyBlocks(1);
-                        } else if (e.getRawSlot() == 21) {
-                            k.setDestroyBlocks(2);
-                        } else if (e.getRawSlot() == 23) {
-                            k.setDestroyBlocks(3);
-                        } else if (e.getRawSlot() == 25) {
-                            k.setDestroyBlocks(4);
-                        }
-                        k.openDestroyPlaceBlocks(player);
-                    }
-                }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"Interact settings")){
-                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
-
-                        if (e.getRawSlot() == 19) {
-                            k.setInteract(1);
-                        } else if (e.getRawSlot() == 21) {
-                            k.setInteract(2);
-                        } else if (e.getRawSlot() == 23) {
-                            k.setInteract(3);
-                        } else if (e.getRawSlot() == 25) {
-                            k.setInteract(4);
-                        }
-                        k.openInteractInventory(player);
-                    }
-                }else if(e.getView().getTitle().equals(ChatColor.GOLD + "PvP settings")){
-                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
-
-                        if (e.getRawSlot() == 19) {
-                            k.setPvP(1);
-                        } else if (e.getRawSlot() == 21) {
-                            k.setPvP(2);
-                        } else if (e.getRawSlot() == 23) {
-                            k.setPvP(3);
-                        } else if (e.getRawSlot() == 25) {
-                            k.setPvP(4);
-                        }
-                        k.openPvPInventory(player);
-                    }
-                }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Pet settings")){
-
-                    if(e.getRawSlot() == 3){
-                        k.openInvulnerablePetsInventory(player);
-                    }else if(e.getRawSlot() == 5){
-                        k.openDamagePetsInventory(player);
-                    }
-
-                }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Invulnerable Pets settings")){
-                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
-                        if (e.getRawSlot() == 12) {
-                            k.setInvulerablePets(true);
-                        } else if (e.getRawSlot() == 14) {
-                            k.setInvulerablePets(false);
-                        }
-
-                        k.openInvulnerablePetsInventory(player);
-                    }
-
-                }else if(e.getView().getTitle().equals(ChatColor.GOLD + "Damage Pets settings")){
-                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
-
-                        if (e.getRawSlot() == 19) {
-                            k.setDamagePets(1);
-                        } else if (e.getRawSlot() == 21) {
-                            k.setDamagePets(2);
-                        } else if (e.getRawSlot() == 23) {
-                            k.setDamagePets(3);
-                        } else if (e.getRawSlot() == 25) {
-                            k.setDamagePets(4);
-                        }
-                        k.openDamagePetsInventory(player);
-                    }
-                }else if(e.getView().getTitle().equals(ChatColor.GOLD + "Enter Kingdom settings")){
-                    if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
-
-                        if (e.getRawSlot() == 19) {
-                            k.setEnterKingdom(1);
-                        } else if (e.getRawSlot() == 21) {
-                            k.setEnterKingdom(2);
-                        } else if (e.getRawSlot() == 23) {
-                            k.setEnterKingdom(3);
-                        } else if (e.getRawSlot() == 25) {
-                            k.setEnterKingdom(4);
-                        }
-                        k.openEnterKingdom(player);
-                    }
+            if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
+                if (e.getRawSlot() == 14) {
+                    k.setTnTActive(false);
+                } else if (e.getRawSlot() == 12) {
+                    k.setTnTActive(true);
                 }
 
+                k.openTnT(player);
             }
+        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Admins, Owner and Members settings")){
+            if(e.getRawSlot() == 2){
+                k.openSeeMembers(player, 1);
+            }else if(e.getRawSlot() == 4){
+                k.openSeeAdmins(player, 1);
+            }else if(e.getRawSlot() == 6){
+                k.openSeeOwner(player);
+            }
+        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Admins settings")){
+            if(e.getCurrentItem().getType() == Material.TIPPED_ARROW && e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Next page")){
+                k.openSeeAdmins(player, Integer.parseInt(e.getCurrentItem().getItemMeta().getLocalizedName())+1);
+            }else if(e.getCurrentItem().getType() == Material.TIPPED_ARROW && e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Last page")){
+                k.openSeeAdmins(player, Integer.parseInt(e.getCurrentItem().getItemMeta().getLocalizedName())-1);
+            }
+        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Members settings")){
+            if(e.getCurrentItem().getType() == Material.TIPPED_ARROW && e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Next page")){
+                k.openSeeMembers(player, Integer.parseInt(e.getCurrentItem().getItemMeta().getLocalizedName())+1);
+            }else if(e.getCurrentItem().getType() == Material.TIPPED_ARROW && e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Last page")){
+                k.openSeeMembers(player, Integer.parseInt(e.getCurrentItem().getItemMeta().getLocalizedName())-1);
+            }
+        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"Block settings")){
+            k.setDestroyBlocks(checkSlot(e.getRawSlot()));
+            k.openDestroyPlaceBlocks(player);
+        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"Interact settings")){
+            k.setInteract(checkSlot(e.getRawSlot()));
+            k.openInteractInventory(player);
+        }else if(e.getView().getTitle().equals(ChatColor.GOLD + "PvP settings")){
+            k.setPvP(checkSlot(e.getRawSlot()));
+            k.openPvPInventory(player);
+        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Pet settings")){
+
+            if(e.getRawSlot() == 3){
+                k.openInvulnerablePetsInventory(player);
+            }else if(e.getRawSlot() == 5){
+                k.openDamagePetsInventory(player);
+            }
+
+        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Invulnerable Pets settings")){
+            if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
+                if (e.getRawSlot() == 12) {
+                    k.setInvulerablePets(true);
+                } else if (e.getRawSlot() == 14) {
+                    k.setInvulerablePets(false);
+                }
+
+                k.openInvulnerablePetsInventory(player);
+            }
+
+        }else if(e.getView().getTitle().equals(ChatColor.GOLD + "Damage Pets settings")){
+            k.setDamagePets(checkSlot(e.getRawSlot()));
+            k.openDamagePetsInventory(player);
+        }else if(e.getView().getTitle().equals(ChatColor.GOLD + "Enter Kingdom settings")){
+            k.setEnterKingdom(checkSlot(e.getRawSlot()));
+            k.openEnterKingdom(player);
         }
-    }
+
+        }
+
 
     @EventHandler
     public void onTnTExplode(EntityExplodeEvent e){
