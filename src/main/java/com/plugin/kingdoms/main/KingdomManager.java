@@ -2,19 +2,17 @@ package com.plugin.kingdoms.main;
 
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;//
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class KingdomManager {
 
-    private ArrayList<Kingdom> kingdomList;
-    private ArrayList<Kingdom> unfinishedKingdomList;
-    private HashMap<UUID, Kingdom> playersInKingdoms;
+    private List<Kingdom> kingdomList;
+    private List<Kingdom> unfinishedKingdomList;
+    private Map<UUID, Kingdom> playersInKingdoms;
     private int maxBlocks;
 
     private File datafile;
@@ -36,16 +34,28 @@ public class KingdomManager {
         changeDataFile.save(datafile);
     }
 
-    public ArrayList<Kingdom> getKingdomList(){
+    public List<Kingdom> getKingdomList(){
         return kingdomList;
     }
 
-    public ArrayList<Kingdom> getUnfinishedKingdomList(){
+    public List<Kingdom> getUnfinishedKingdomList(){
         return  unfinishedKingdomList;
     }
+    public void addKingdomToList(Kingdom k){
+        kingdomList.add(k);
+    }
+    public void removeKingdomFromList(Kingdom k){
+        kingdomList.remove(k);
+    }
+    public void clearKingdomList(){
+        kingdomList.clear();
+    }
 
-    public HashMap<UUID, Kingdom> getPlayersInKingdoms(){
+    public Map<UUID, Kingdom> getPlayersInKingdoms(){
         return  playersInKingdoms;
+    }
+    public Kingdom getKingdom(int i){
+        return kingdomList.get(i);
     }
 
     public int getMaxBlocks(){
@@ -58,6 +68,7 @@ public class KingdomManager {
     public void safeData(){
 
         changeDataFile.set("maxblocks", maxBlocks);
+
         if(kingdomList.size() == 0){
             changeDataFile.set("kingdoms", null);
         }
@@ -66,20 +77,21 @@ public class KingdomManager {
 
             Kingdom k = kingdomList.get(i);
 
+
             changeDataFile.set("kingdoms."+i+".owner", k.getOwner().toString());
             changeDataFile.set("kingdoms."+i+".minloc", k.getMinLocation());
             changeDataFile.set("kingdoms."+i+".maxloc", k.getMaxLocation());
             if(k.getParticleType() != null) {
                 changeDataFile.set("kingdoms." + i + ".particle", k.getParticleType().toString());
             }
-            changeDataFile.set("kingdoms."+i+".particleamount", k.getParticleAmount());
-            //Locations, port und particle
-            for(int j = 0; j<k.getPortLocations().size(); j++){
-                changeDataFile.set("kingdoms."+i+".portloc."+j, k.getPortLocations().get(j));
-            }
-            for(int y = 0; y<k.getParticleLocations().size();y++){
-                changeDataFile.set("kingdoms."+i+".partloc."+y, k.getParticleLocations().get(y));
-            }
+            ////changeDataFile.set("kingdoms."+i+".particleamount", k.getParticleAmount());
+            ////Locations, port und particle
+            //for(int j = 0; j<k.getPortLocations().size(); j++){
+            //    changeDataFile.set("kingdoms."+i+".portloc."+j, k.getPortLocations().get(j));
+            //}
+            //for(int y = 0; y<k.getParticleLocations().size();y++){
+            //    changeDataFile.set("kingdoms."+i+".partloc."+y, k.getParticleLocations().get(y));
+            //}
 
             changeDataFile.set("kingdoms."+i+".interact", k.getInteract());
             changeDataFile.set("kingdoms."+i+".destroyblocks", k.getDestroyBlocks());
@@ -139,20 +151,19 @@ public class KingdomManager {
                 int hitpets = changeDataFile.getInt("kingdoms."+i+".hitpets");
                 int enter = changeDataFile.getInt("kingdoms."+i+".enter");
 
-
                 //Port locs, part locs, admins and members
-                ArrayList<Location> portLocations = new ArrayList<>();
-                if(changeDataFile.getConfigurationSection("kingdoms."+i+".portloc") != null){
-                    for(int j = 0; j<changeDataFile.getConfigurationSection("kingdoms."+i+".portloc.").getKeys(false).size(); j++){
-                        portLocations.add(changeDataFile.getLocation("kingdoms."+i+".portloc."+j));
-                    }
-                }
-                ArrayList<Location> partLocations = new ArrayList<>();
-                if(changeDataFile.getConfigurationSection("kingdoms."+i+".partloc") != null){
-                    for(int j = 0; j<changeDataFile.getConfigurationSection("kingdoms."+i+".partloc.").getKeys(false).size(); j++){
-                        partLocations.add(changeDataFile.getLocation("kingdoms."+i+".partloc."+j));
-                    }
-                }
+                ////ArrayList<Location> portLocations = new ArrayList<>();
+                ////if(changeDataFile.getConfigurationSection("kingdoms."+i+".portloc") != null){
+                ////    for(int j = 0; j<changeDataFile.getConfigurationSection("kingdoms."+i+".portloc.").getKeys(false).size(); j++){
+                ////        portLocations.add(changeDataFile.getLocation("kingdoms."+i+".portloc."+j));
+                ////    }
+                ////}
+                //ArrayList<Location> partLocations = new ArrayList<>();
+                //if(changeDataFile.getConfigurationSection("kingdoms."+i+".partloc") != null){
+                //    for(int j = 0; j<changeDataFile.getConfigurationSection("kingdoms."+i+".partloc.").getKeys(false).size(); j++){
+                //        partLocations.add(changeDataFile.getLocation("kingdoms."+i+".partloc."+j));
+                //    }
+                //}
                 ArrayList<UUID> admins = new ArrayList<>();
                 if(changeDataFile.getConfigurationSection("kingdoms."+i+".admins") != null){
                     for(int j = 0; j<changeDataFile.getConfigurationSection("kingdoms."+i+".admins.").getKeys(false).size(); j++){
@@ -166,7 +177,7 @@ public class KingdomManager {
                     }
                 }
 
-                Kingdom idk = new Kingdom(owner, minLocation, maxLocation, type, particleAmount, interact, destroyblocks, settings, addadmins, addmembers, removeadmins, removemembers, pvp, pets, hitpets, enter, portLocations, partLocations, admins, members, tnt);
+                Kingdom idk = new Kingdom(owner, minLocation, maxLocation, type, particleAmount, interact, destroyblocks, settings, addadmins, addmembers, removeadmins, removemembers, pvp, pets, hitpets, enter, admins, members, tnt);
                 kingdomList.add(idk);
 
             }

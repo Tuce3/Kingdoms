@@ -72,7 +72,7 @@ public class KingdomListener implements Listener {
                 }
             }
         }
-
+        if(e.getPlayer().isOp()) return;
         for(Kingdom k : Kingdoms.getManager().getKingdomList()){
             if(k.getArea().containsLocation(e.getPlayer().getLocation()) || (e.getClickedBlock() != null && k.getArea().containsLocation(e.getClickedBlock().getLocation()))){
                 checkAllowed(k.getInteract(), e,e.getPlayer(), k);
@@ -83,6 +83,8 @@ public class KingdomListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e){
 
+        if(e.getPlayer().isOp()) return;
+
         Kingdom kingdomPlayerIsIn = null;
         Kingdom kingdomPlayerIsInNow = null;
         Player player = e.getPlayer();
@@ -92,7 +94,7 @@ public class KingdomListener implements Listener {
         }
 
         for(int i = 0; i< Kingdoms.getManager().getKingdomList().size(); i++){
-            Kingdom k = Kingdoms.getManager().getKingdomList().get(i);
+            Kingdom k = Kingdoms.getManager().getKingdom(i);
             boolean isAllowed = true;
             if(k.getAdmins().contains(player.getUniqueId())){
                 if(k.getEnterKingdom() == 4){
@@ -295,7 +297,6 @@ public class KingdomListener implements Listener {
 
         }
 
-
     @EventHandler
     public void onTnTExplode(EntityExplodeEvent e){
         for(Kingdom k : Kingdoms.getManager().getKingdomList()){
@@ -318,6 +319,7 @@ public class KingdomListener implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e){
+        if(e.getPlayer().isOp()) return;
         for(Kingdom k : Kingdoms.getManager().getKingdomList()){
             if(k.getArea().containsLocation(e.getBlock().getLocation())){
                 checkAllowed(k.getDestroyBlocks(), e,e.getPlayer(), k);
@@ -327,7 +329,7 @@ public class KingdomListener implements Listener {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e){
-
+        if(e.getPlayer().isOp()) return;
         for(Kingdom k : Kingdoms.getManager().getKingdomList()){
             if(k.getArea().containsLocation(e.getPlayer().getLocation()) || k.getArea().containsLocation(e.getRightClicked().getLocation())){
                 checkAllowed(k.getInteract(), e,e.getPlayer(), k);
@@ -338,7 +340,7 @@ public class KingdomListener implements Listener {
 
     @EventHandler
     public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent e){
-
+        if(e.getPlayer().isOp()) return;
         for(Kingdom k : Kingdoms.getManager().getKingdomList()){
             if(k.getArea().containsLocation(e.getPlayer().getLocation()) || k.getArea().containsLocation(e.getRightClicked().getLocation())){
                 checkAllowed(k.getInteract(), e,e.getPlayer(), k);
@@ -352,6 +354,7 @@ public class KingdomListener implements Listener {
     public void onPlayerPunchEntity(EntityDamageByEntityEvent e){
         if(e.getDamager().getType() == EntityType.PLAYER && e.getEntity().getType() != EntityType.PLAYER){
             for(Kingdom k : Kingdoms.getManager().getKingdomList()){
+                if(((Player) e.getDamager()).isOp()) return;
                 if(k.getArea().containsLocation(e.getDamager().getLocation()) || k.getArea().containsLocation(e.getEntity().getLocation())){
                     checkAllowed(k.getInteract(), e,(Player) e.getDamager(), k);
                 }if(k.getArea().containsLocation(e.getEntity().getLocation())){

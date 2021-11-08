@@ -32,6 +32,8 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
                 Kingdoms.getManager().getUnfinishedKingdomList().add(k);
                 player.sendMessage(ChatColor.GREEN + "Created a new Kingdom! Set the 2 Location via right clicking on blocks! You have 60 Seconds to do that!");
                 PlayerCreateKingdom(k);
+            } else if(args.length == 1 && args[0].equalsIgnoreCase("save")){
+                Kingdoms.getManager().safeData();
             } else if(args[0].equalsIgnoreCase("help")){
 
                 player.sendMessage(ChatColor.YELLOW + "Kingdom help:");
@@ -66,7 +68,7 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
                         for(Kingdom y : Kingdoms.getManager().getKingdomList()){
                             Bukkit.getScheduler().cancelTask(y.getRunnableId());
                         }
-                        Kingdoms.getManager().getKingdomList().clear();
+                        Kingdoms.getManager().clearKingdomList();
                         player.sendMessage(ChatColor.GREEN + "Deleted all Kingdoms! There is no way to reverse this Action!");
 
                         Kingdoms.getManager().safeData();
@@ -81,7 +83,7 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
 
                     if(args.length == 2 && args[1].equalsIgnoreCase("delete")){
                         if(player.isOp() || k.getOwner().equals(player.getUniqueId())){
-                            Kingdoms.getManager().getKingdomList().remove(k);
+                            Kingdoms.getManager().removeKingdomFromList(k);
                             Bukkit.getScheduler().cancelTask(k.getRunnableId());
                             player.sendMessage(ChatColor.GREEN + "Deleted Kingdom! There is no way to reverse this Action!");
                             Kingdoms.getManager().safeData();
@@ -91,7 +93,7 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
                     }
 
                     if (args.length == 1) {
-                        if (k.getOwner().equals(player.getUniqueId())) {
+                        if (k.getOwner().equals(player.getUniqueId()) || player.isOp()) {
                             k.openSettingsGui(player);
                         } else if (k.getAdmins().contains(player.getUniqueId())) {
                             if (k.getSettings() <= 3) {

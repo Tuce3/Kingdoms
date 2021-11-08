@@ -20,9 +20,9 @@ public class Kingdom extends KingdomSettings{
     private Cuboid2d area;
     private Particle particleType;
     private int particleAmount;
-    private final ArrayList<Location> ParticleLocations;
+    private ArrayList<Location> ParticleLocations;
     private int particleRunnableId;
-    private final ArrayList<Location> portLocations;
+    private ArrayList<Location> portLocations;
 
 
     private final ArrayList<UUID> admins;
@@ -40,23 +40,22 @@ public class Kingdom extends KingdomSettings{
 
     }
 
-    public Kingdom(UUID owner, Location minLocation, Location maxLocation, Particle type, int particleAmount, int interact, int destroyBlocks, int settings, int addAdmins, int addMembers, int removeAdmins, int removeMembers, int pvp, boolean pets, int hitPets, int enterKingdom, ArrayList<Location> portLocations, ArrayList<Location> particleLocations, ArrayList<UUID> admins, ArrayList<UUID> members, boolean tnTActive){
+    public Kingdom(UUID owner, Location minLocation, Location maxLocation, Particle type, int particleAmount, int interact, int destroyBlocks, int settings, int addAdmins, int addMembers, int removeAdmins, int removeMembers, int pvp, boolean pets, int hitPets, int enterKingdom, ArrayList<UUID> admins, ArrayList<UUID> members, boolean tnTActive){
+
         super( interact,  destroyBlocks,  settings,  addAdmins,  addMembers,  removeAdmins,  removeMembers,  pvp,  pets,  hitPets,  enterKingdom,  tnTActive);
         this.owner = owner;
-        this.ParticleLocations = particleLocations;
-        this.portLocations = portLocations;
         this.admins = admins;
         this.members = members;
         this.particleAmount = particleAmount;
         this.particleType = type;
+
+        this.ParticleLocations = new ArrayList<>();
+        this.portLocations = new ArrayList<>();
         this.setMinLocation(minLocation, true);
         this.setMaxLocation(maxLocation, true);
 
-
-
-
-
     }
+
     public void setMinLocation(Location location, boolean dataload){
         this.minLocation = location;
         if(Bukkit.getPlayer(owner) != null && !dataload){
@@ -93,19 +92,19 @@ public class Kingdom extends KingdomSettings{
 
             boolean kingdomCantBeCreated = false;
 
-            if (kingdomCantBeCreated) {
-                if (Bukkit.getPlayer(owner) != null) {
-                    Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "You cant create a new Kingdom here!");
-                    return;
-                }
-            }
-
             for (Kingdom k : Kingdoms.getManager().getKingdomList()) {
                 if (k.getArea().containsLocation(area.getMaxMaxLocation()) || k.getArea().containsLocation(area.getMinMaxLocation()) || k.getArea().containsLocation(area.getMaxMinLocation()) || k.getArea().containsLocation(area.getMinLocation())) {
                     kingdomCantBeCreated = true;
                 }
                 if (area.containsLocation(k.getArea().getMinLocation()) || area.containsLocation(k.getArea().getMinMaxLocation()) || area.containsLocation(k.getArea().getMaxMinLocation()) || area.containsLocation(k.getArea().getMaxMinLocation())) {
                     kingdomCantBeCreated = true;
+                }
+            }
+
+            if (kingdomCantBeCreated) {
+                if (Bukkit.getPlayer(owner) != null) {
+                    Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "You cant create a new Kingdom here!");
+                    return;
                 }
             }
 
@@ -119,9 +118,9 @@ public class Kingdom extends KingdomSettings{
                 }
 
             }
-            Kingdoms.getManager().getKingdomList().add(this);
-            calculateParticleLocation();
+            Kingdoms.getManager().addKingdomToList(this);
         }
+        calculateParticleLocation();
 
         if(Bukkit.getPlayer(owner) != null){
             Bukkit.getPlayer(owner).sendMessage(ChatColor.GREEN + "Kingdom created!");
