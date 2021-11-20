@@ -36,7 +36,7 @@ public class Cuboid2d {
 
     }
 
-    public Location getMinLocation(){
+    public Location getMinMinLocation(){
         return new Location(world, minX, 0, minZ);
     }
     public Location getMaxMinLocation(){
@@ -47,5 +47,8 @@ public class Cuboid2d {
     }
     public Location getMaxMaxLocation(){
         return new Location(world, maxX, 0, maxZ);
+    }
+    public long getAreaSize(){
+        return (long) ((long) ((maxX+1)-minX)*((maxZ+1)-minZ));
     }
 }

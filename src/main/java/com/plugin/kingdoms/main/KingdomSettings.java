@@ -129,10 +129,10 @@ public class KingdomSettings implements KingdomInterface{
     public int getHitPets(){
         return hitPets;
     }
-    public boolean getPetInvulerable(){
+    public boolean getPetInvulnerable(){
         return invulerablePets;
     }
-    public void setInvulerablePets(boolean t){
+    public void setInvulnerablePets(boolean t){
         invulerablePets = t;
     }
     public void setDamagePets(int p){
@@ -390,6 +390,5 @@ public class KingdomSettings implements KingdomInterface{
 
         return gui;
     }
-
 
 }

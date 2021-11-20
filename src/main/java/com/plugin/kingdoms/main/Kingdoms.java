@@ -1,12 +1,9 @@
 package com.plugin.kingdoms.main;
 
-import net.minecraft.server.v1_16_R3.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 
 public final class Kingdoms extends JavaPlugin {
 
@@ -17,25 +14,32 @@ public final class Kingdoms extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
 
-        instance = this;
+        getConfig().options().copyDefaults();
+        saveDefaultConfig();
 
+        instance = this;
         try {
             manager = new KingdomManager();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
         getCommand("kingdom").setExecutor(new KingdomCommand());
         getCommand("kingdom").setTabCompleter(new KingdomCommand());
         Bukkit.getPluginManager().registerEvents(new KingdomListener(), this);
 
+        //YAML files
         Kingdoms.getManager().loadData();
 
-        //Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-        //    @Override
-        //    public void run() {
-        //        Kingdoms.getManager().safeData();
-        //    }
-        //}, 400, 600);
+        if(getConfig().getBoolean("autosave")){
+            Bukkit.getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+                @Override
+                public void run() {
+                    Kingdoms.getManager().safeData();
+                }
+            }, 400, getConfig().getLong("autosavetime"));
+        }
 
     }
 
@@ -52,4 +56,5 @@ public final class Kingdoms extends JavaPlugin {
     public static KingdomManager getManager(){
         return  manager;
     }
+
 }

@@ -8,18 +8,18 @@ import org.bukkit.inventory.ItemStack;
 
 public interface KingdomInterface {
 
-    int interact = 2;
-    int destroyBlocks = 2;
-    int settings = 4;
-    int addAdmins = 4;
-    int addMembers = 3;
-    int removeAdmins = 4;
-    int removeMembers = 3;
-    int PvP = 1;
-    boolean TnTActive = true;
-    boolean invulerablePets = false;
-    int hitPets = 3;
-    int enterKingdom = 1;
+    int interact = Kingdoms.getInstance().getConfig().getInt("interact");
+    int destroyBlocks = Kingdoms.getInstance().getConfig().getInt("destroyBlocks");
+    int settings = Kingdoms.getInstance().getConfig().getInt("settings");
+    int addAdmins = Kingdoms.getInstance().getConfig().getInt("addAdmins");
+    int addMembers = Kingdoms.getInstance().getConfig().getInt("addMembers");
+    int removeAdmins = Kingdoms.getInstance().getConfig().getInt("removeAdmins");
+    int removeMembers = Kingdoms.getInstance().getConfig().getInt("removeMembers");
+    int PvP = Kingdoms.getInstance().getConfig().getInt("PvP");
+    boolean TnTActive = Kingdoms.getInstance().getConfig().getBoolean("TnTActive");
+    boolean invulerablePets = Kingdoms.getInstance().getConfig().getBoolean("invulnerablePets");
+    int hitPets = Kingdoms.getInstance().getConfig().getInt("hitPets");
+    int enterKingdom = Kingdoms.getInstance().getConfig().getInt("enterKingdom");
 
     ItemStack activated = Utils.itemBuilder(Material.LIME_DYE, 1, ChatColor.GREEN + "Activated", null, null);
 

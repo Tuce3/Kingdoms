@@ -82,69 +82,67 @@ public class KingdomListener implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e){
-
-        if(e.getPlayer().isOp()) return;
-
-        Kingdom kingdomPlayerIsIn = null;
-        Kingdom kingdomPlayerIsInNow = null;
-        Player player = e.getPlayer();
-
-        if(Kingdoms.getManager().getPlayersInKingdoms().containsKey(e.getPlayer().getUniqueId())){
-            kingdomPlayerIsIn = Kingdoms.getManager().getPlayersInKingdoms().get(e.getPlayer().getUniqueId());
-        }
-
-        for(int i = 0; i< Kingdoms.getManager().getKingdomList().size(); i++){
-            Kingdom k = Kingdoms.getManager().getKingdom(i);
-            boolean isAllowed = true;
-            if(k.getAdmins().contains(player.getUniqueId())){
-                if(k.getEnterKingdom() == 4){
-                    isAllowed = false;
-                }
-            }else if(k.getMembers().contains(player.getUniqueId())){
-                if(k.getEnterKingdom() > 2){
-                    isAllowed = false;
-                }
-            }else if(k.getOwner().equals(player.getUniqueId())){
-                if(k.getEnterKingdom() > 4){
-                    isAllowed = false;
-                }
-            }else{
-                if(k.getEnterKingdom() > 1){
-                    isAllowed = false;
-                }
-            }
-
-            if(k.getArea().containsLocation(e.getPlayer().getLocation().getBlock().getLocation()) && isAllowed){
-                kingdomPlayerIsInNow = k;
-            }else if(k.getArea().containsLocation(e.getPlayer().getLocation().getBlock().getLocation()) && !isAllowed){
-                Location portLocation = player.getLocation();
-                double smallestDistance = -5;
-                for(Location loc : k.getPortLocations()){
-                    if(smallestDistance == -5){
-                        smallestDistance = loc.distance(player.getLocation());
-                        portLocation = loc;
+        for(Kingdom k : Kingdoms.getManager().getKingdomList()){
+            if(k.getArea().containsLocation(e.getPlayer().getLocation())){
+                if((Kingdoms.getManager().getPlayersInKingdoms().containsKey(e.getPlayer().getUniqueId()) && Kingdoms.getManager().getPlayersInKingdoms().get(e.getPlayer().getUniqueId()) != k) ||
+                        (!Kingdoms.getManager().getPlayersInKingdoms().containsKey(e.getPlayer().getUniqueId()))){
+                    Player player = e.getPlayer();
+                    boolean isAllowed = true;
+                    if(k.getAdmins().contains(player.getUniqueId())){
+                        if(k.getEnterKingdom() == 4){
+                            isAllowed = false;
+                        }
+                    }else if(k.getMembers().contains(player.getUniqueId())){
+                        if(k.getEnterKingdom() > 2){
+                            isAllowed = false;
+                        }
+                    }else if(k.getOwner().equals(player.getUniqueId())){
+                        if(k.getEnterKingdom() > 4){
+                            isAllowed = false;
+                        }
                     }else{
-                        if(smallestDistance > loc.distance(player.getLocation())){
-                            smallestDistance = loc.distance(player.getLocation());
-                            portLocation = loc;
+                        if(k.getEnterKingdom() > 1){
+                            isAllowed = false;
+                        }
+                    }
+                    if(player.isOp()) isAllowed = true;
+
+                    if(k.getArea().containsLocation(e.getPlayer().getLocation().getBlock().getLocation()) && isAllowed){
+                        Kingdoms.getManager().getPlayersInKingdoms().put(player.getUniqueId(), k);
+                        if(k.getName() == null){
+                            player.sendTitle(ChatColor.AQUA + "You entered a Kingdom", ChatColor.AQUA + "of " + ChatColor.AQUA + Bukkit.getOfflinePlayer(k.getOwner()).getName(), 10, 50, 10);
+                        }else{
+                            player.sendTitle(ChatColor.AQUA + "You entered", ChatColor.AQUA + k.getName(), 10, 50, 10);
+                        }
+                    }else if(k.getArea().containsLocation(e.getPlayer().getLocation().getBlock().getLocation()) && !isAllowed){
+                        Location portLocation = player.getLocation();
+                        double smallestDistance = -5;
+                        for(Location loc : k.getPortLocations()){
+                            if(smallestDistance == -5){
+                                smallestDistance = loc.distance(player.getLocation());
+                                portLocation = loc;
+                            }else{
+                                if(smallestDistance > loc.distance(player.getLocation())){
+                                    smallestDistance = loc.distance(player.getLocation());
+                                    portLocation = loc;
+                                }
+                            }
+                        }
+
+                        player.teleport(new Location(portLocation.getWorld(), portLocation.getBlockX(), portLocation.getWorld().getHighestBlockAt(portLocation).getLocation().getY()+ 1, portLocation.getBlockZ(), player.getLocation().getYaw(), player.getLocation().getPitch()));
+                        if(k.getName() == null){
+                            e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to enter the Kingdom of "+ChatColor.RED+Bukkit.getOfflinePlayer(k.getOwner()).getName()+ChatColor.RED+"!");
+                        }else{
+                            e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to enter "+ ChatColor.RED+k.getName()+ChatColor.RED+"!");
                         }
                     }
                 }
 
-                player.teleport(new Location(portLocation.getWorld(), portLocation.getBlockX(), portLocation.getWorld().getHighestBlockAt(portLocation).getLocation().getY()+ 1, portLocation.getBlockZ(), player.getLocation().getYaw(), player.getLocation().getPitch()));
-                e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to enter this Kingdom!");
+                return;
             }
         }
-
-        if(kingdomPlayerIsIn != null || kingdomPlayerIsInNow != null){
-            if(kingdomPlayerIsIn == null && kingdomPlayerIsInNow != null){
-                Kingdoms.getManager().getPlayersInKingdoms().put(e.getPlayer().getUniqueId(), kingdomPlayerIsInNow);
-                e.getPlayer().sendTitle(ChatColor.AQUA + "You entered a Kingdom", ChatColor.AQUA + "of " + ChatColor.AQUA + Bukkit.getOfflinePlayer(kingdomPlayerIsInNow.getOwner()).getName(), 10, 80, 10);
-            }else if(kingdomPlayerIsIn != null && kingdomPlayerIsInNow == null){
-                e.getPlayer().sendTitle(ChatColor.AQUA + "You left a Kingdom of", ChatColor.AQUA + Bukkit.getOfflinePlayer(kingdomPlayerIsIn.getOwner()).getName(), 10, 80, 10);
-                Kingdoms.getManager().getPlayersInKingdoms().remove(e.getPlayer().getUniqueId());
-            }
-
+        if(Kingdoms.getManager().getPlayersInKingdoms().containsKey(e.getPlayer().getUniqueId())){
+            Kingdoms.getManager().getPlayersInKingdoms().remove(e.getPlayer().getUniqueId());
         }
     }
 
@@ -171,7 +169,7 @@ public class KingdomListener implements Listener {
                 k.openBorderParticleColor(player);
             }else if(e.getCurrentItem().equals(KingdomInterface.TnT)){
                 k.openTnT(player);
-            }else if(e.getCurrentItem().equals(KingdomInterface.addremoveadminsmembers)){
+            }else if(e.getCurrentItem().equals(KingdomInterface.viewMembers)){
                 k.openSeeAdminsMembers(player);
             }else if(e.getCurrentItem().equals(KingdomInterface.blockSettings)){
                 k.openDestroyPlaceBlocks(player);
@@ -279,9 +277,9 @@ public class KingdomListener implements Listener {
         }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Invulnerable Pets settings")){
             if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
                 if (e.getRawSlot() == 12) {
-                    k.setInvulerablePets(true);
+                    k.setInvulnerablePets(true);
                 } else if (e.getRawSlot() == 14) {
-                    k.setInvulerablePets(false);
+                    k.setInvulnerablePets(false);
                 }
 
                 k.openInvulnerablePetsInventory(player);
@@ -352,6 +350,8 @@ public class KingdomListener implements Listener {
 
     @EventHandler
     public void onPlayerPunchEntity(EntityDamageByEntityEvent e){
+
+
         if(e.getDamager().getType() == EntityType.PLAYER && e.getEntity().getType() != EntityType.PLAYER){
             for(Kingdom k : Kingdoms.getManager().getKingdomList()){
                 if(((Player) e.getDamager()).isOp()) return;

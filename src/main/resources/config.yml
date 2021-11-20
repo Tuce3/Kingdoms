@@ -1,0 +1,29 @@
+#the max sie of a kingdom, x*z length
+maxblocks: 10000000
+#The max amount of blocks all Kingdoms of a Player can have in total
+maxblockperplayer: 10000000
+#The max amount of Kingdoms a single Player can have
+maxkingdomsperplayer: 10000000
+#The max amount of Kingdoms in total
+maxkingdoms: 1000000
+#The mindistance 2 kingdoms have to have to eachother.
+mindistance: 20
+#If Particles can be used
+particles: true
+#The standard values for the settings of a newly created Kingdom
+interact: 2
+destroyBlocks: 2
+settings: 4
+addAdmins: 4
+addMembers: 3
+removeAdmins: 4
+removeMembers: 3
+PvP: 1
+TnTActive: true
+invulerablePets: false
+hitPets: 3
+enterKingdom: 1
+#If the data should be automatically saved every x amount of ticks, and not just when disabling the plugin(Server restart or stop)
+autosave: false
+#Amount of ticks between the saves, 20 ticks = 1 second, 1200 or higher recommended, only if autosave is on
+autosavetime: 1200

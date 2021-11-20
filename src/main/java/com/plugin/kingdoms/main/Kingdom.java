@@ -18,11 +18,13 @@ public class Kingdom extends KingdomSettings{
     private Location minLocation;
     private Location maxLocation;
     private Cuboid2d area;
+    private Cuboid2d checkArea;
     private Particle particleType;
     private int particleAmount;
     private ArrayList<Location> ParticleLocations;
     private int particleRunnableId;
     private ArrayList<Location> portLocations;
+    private String name = null;
 
 
     private final ArrayList<UUID> admins;
@@ -40,7 +42,7 @@ public class Kingdom extends KingdomSettings{
 
     }
 
-    public Kingdom(UUID owner, Location minLocation, Location maxLocation, Particle type, int particleAmount, int interact, int destroyBlocks, int settings, int addAdmins, int addMembers, int removeAdmins, int removeMembers, int pvp, boolean pets, int hitPets, int enterKingdom, ArrayList<UUID> admins, ArrayList<UUID> members, boolean tnTActive){
+    public Kingdom(UUID owner, Location minLocation, Location maxLocation, Particle type, int particleAmount, int interact, int destroyBlocks, int settings, int addAdmins, int addMembers, int removeAdmins, int removeMembers, int pvp, boolean pets, int hitPets, int enterKingdom, ArrayList<UUID> admins, ArrayList<UUID> members, boolean tnTActive, String name){
 
         super( interact,  destroyBlocks,  settings,  addAdmins,  addMembers,  removeAdmins,  removeMembers,  pvp,  pets,  hitPets,  enterKingdom,  tnTActive);
         this.owner = owner;
@@ -53,6 +55,7 @@ public class Kingdom extends KingdomSettings{
         this.portLocations = new ArrayList<>();
         this.setMinLocation(minLocation, true);
         this.setMaxLocation(maxLocation, true);
+        this.name = name;
 
     }
 
@@ -77,6 +80,7 @@ public class Kingdom extends KingdomSettings{
 
 
         area = new Cuboid2d(minLocation, maxLocation);
+        checkArea = new Cuboid2d(new Location(maxLocation.getWorld(), Math.min(minLocation.getX(), maxLocation.getX())-Kingdoms.getInstance().getConfig().getLong("mindistance"), 0d, Math.min(minLocation.getZ(), maxLocation.getZ())-Kingdoms.getInstance().getConfig().getLong("mindistance")), new Location(maxLocation.getWorld(), Math.max(minLocation.getX(), maxLocation.getX())+Kingdoms.getInstance().getConfig().getLong("mindistance"), 0d, Math.max(minLocation.getZ(), maxLocation.getZ())+Kingdoms.getInstance().getConfig().getLong("mindistance")));
 
         if(!dataload) {
             if (Kingdoms.getManager().getPlayersInKingdoms().containsKey(owner)) {
@@ -93,10 +97,10 @@ public class Kingdom extends KingdomSettings{
             boolean kingdomCantBeCreated = false;
 
             for (Kingdom k : Kingdoms.getManager().getKingdomList()) {
-                if (k.getArea().containsLocation(area.getMaxMaxLocation()) || k.getArea().containsLocation(area.getMinMaxLocation()) || k.getArea().containsLocation(area.getMaxMinLocation()) || k.getArea().containsLocation(area.getMinLocation())) {
+                if (k.getCheckArea().containsLocation(area.getMaxMaxLocation()) || k.getCheckArea().containsLocation(area.getMinMaxLocation()) || k.getCheckArea().containsLocation(area.getMaxMinLocation()) || k.getCheckArea().containsLocation(area.getMinMinLocation())) {
                     kingdomCantBeCreated = true;
                 }
-                if (area.containsLocation(k.getArea().getMinLocation()) || area.containsLocation(k.getArea().getMinMaxLocation()) || area.containsLocation(k.getArea().getMaxMinLocation()) || area.containsLocation(k.getArea().getMaxMinLocation())) {
+                if (checkArea.containsLocation(k.getArea().getMinMinLocation()) || checkArea.containsLocation(k.getArea().getMinMaxLocation()) || checkArea.containsLocation(k.getArea().getMaxMinLocation()) || checkArea.containsLocation(k.getArea().getMaxMinLocation())) {
                     kingdomCantBeCreated = true;
                 }
             }
@@ -108,7 +112,7 @@ public class Kingdom extends KingdomSettings{
                 }
             }
 
-            if ((area.getMaxMaxLocation().getBlockZ() - area.getMaxMinLocation().getBlockZ()) * (area.getMaxMaxLocation().getBlockX() - area.getMinMaxLocation().getBlockX()) > Kingdoms.getManager().getMaxBlocks()) {
+            if (area.getAreaSize() > Kingdoms.getInstance().getConfig().getLong("maxblocks") && !Bukkit.getOfflinePlayer(owner).isOp()) {
                 if (Bukkit.getPlayer(owner) != null) {
                     Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "Your Kingdom is too big!");
                     if (Bukkit.getPlayer(owner).isOp()) {
@@ -118,6 +122,20 @@ public class Kingdom extends KingdomSettings{
                 }
 
             }
+            long kingdomsizeOfPlayer = 0;
+            kingdomsizeOfPlayer += area.getAreaSize();
+            for(Kingdom k : Kingdoms.getManager().getKingdomList()){
+                if(k.getOwner().equals(owner)){
+                    kingdomsizeOfPlayer += k.getArea().getAreaSize();
+                }
+            }
+            if(kingdomsizeOfPlayer > Kingdoms.getInstance().getConfig().getLong("maxblockperplayer") && !Bukkit.getOfflinePlayer(owner).isOp()){
+                if(Bukkit.getPlayer(owner) != null){
+                    Bukkit.getPlayer(owner).sendMessage(ChatColor.GREEN + "You have reached the max size of all your Kingdoms");
+
+                }
+                return;
+            }
             Kingdoms.getManager().addKingdomToList(this);
         }
         calculateParticleLocation();
@@ -125,7 +143,9 @@ public class Kingdom extends KingdomSettings{
         if(Bukkit.getPlayer(owner) != null){
             Bukkit.getPlayer(owner).sendMessage(ChatColor.GREEN + "Kingdom created!");
         }
-        spawnParticles();
+        if(Kingdoms.getInstance().getConfig().getBoolean("particles")){
+            spawnParticles();
+        }
     }
 
     private void spawnParticles(){
@@ -145,24 +165,24 @@ public class Kingdom extends KingdomSettings{
 
     private void calculateParticleLocation(){
         for(int i = 0; i<area.getMaxMaxLocation().getBlockZ()-area.getMaxMinLocation().getBlockZ(); i++){
-            ParticleLocations.add(new Location(minLocation.getWorld(), area.getMaxMaxLocation().getBlockX(), 0, area.getMinLocation().getBlockZ()+i ));
-            portLocations.add(new Location(minLocation.getWorld(), area.getMaxMaxLocation().getBlockX()+2, 0, area.getMinLocation().getBlockZ()+i ));
+            ParticleLocations.add(new Location(minLocation.getWorld(), area.getMaxMaxLocation().getBlockX(), 0, area.getMinMinLocation().getBlockZ()+i ));
+            portLocations.add(new Location(minLocation.getWorld(), area.getMaxMaxLocation().getBlockX()+2, 0, area.getMinMinLocation().getBlockZ()+i ));
         }
         for(int i = 0; i<area.getMaxMaxLocation().getBlockX()-area.getMinMaxLocation().getBlockX(); i++){
-            ParticleLocations.add(new Location(minLocation.getWorld(), area.getMinLocation().getBlockX()+i, 0, area.getMaxMaxLocation().getBlockZ()));
-            portLocations.add(new Location(minLocation.getWorld(), area.getMinLocation().getBlockX()+i, 0, area.getMaxMaxLocation().getBlockZ()+2));
+            ParticleLocations.add(new Location(minLocation.getWorld(), area.getMinMinLocation().getBlockX()+i, 0, area.getMaxMaxLocation().getBlockZ()));
+            portLocations.add(new Location(minLocation.getWorld(), area.getMinMinLocation().getBlockX()+i, 0, area.getMaxMaxLocation().getBlockZ()+2));
         }
 
-        for(int i = 0; i<area.getMinMaxLocation().getBlockZ()-area.getMinLocation().getBlockZ(); i++){
-            ParticleLocations.add(new Location(minLocation.getWorld(), area.getMinLocation().getBlockX(), 0, area.getMinLocation().getBlockZ()+i ));
-            portLocations.add(new Location(minLocation.getWorld(), area.getMinLocation().getBlockX()-2, 0, area.getMinLocation().getBlockZ()+i ));
+        for(int i = 0; i<area.getMinMaxLocation().getBlockZ()-area.getMinMinLocation().getBlockZ(); i++){
+            ParticleLocations.add(new Location(minLocation.getWorld(), area.getMinMinLocation().getBlockX(), 0, area.getMinMinLocation().getBlockZ()+i ));
+            portLocations.add(new Location(minLocation.getWorld(), area.getMinMinLocation().getBlockX()-2, 0, area.getMinMinLocation().getBlockZ()+i ));
         }
-        for(int i = 0; i<area.getMaxMinLocation().getBlockX()-area.getMinLocation().getBlockX(); i++){
-            if(ParticleLocations.contains(new Location(minLocation.getWorld(), area.getMinLocation().getBlockX()+i, 0, area.getMinLocation().getBlockZ()))){
+        for(int i = 0; i<area.getMaxMinLocation().getBlockX()-area.getMinMinLocation().getBlockX(); i++){
+            if(ParticleLocations.contains(new Location(minLocation.getWorld(), area.getMinMinLocation().getBlockX()+i, 0, area.getMinMinLocation().getBlockZ()))){
                 ParticleLocations.add(area.getMaxMaxLocation());
             }else{
-                ParticleLocations.add(new Location(minLocation.getWorld(), area.getMinLocation().getBlockX()+i, 0, area.getMinLocation().getBlockZ()));
-                portLocations.add(new Location(minLocation.getWorld(), area.getMinLocation().getBlockX()+i, 0, area.getMinLocation().getBlockZ()-2));
+                ParticleLocations.add(new Location(minLocation.getWorld(), area.getMinMinLocation().getBlockX()+i, 0, area.getMinMinLocation().getBlockZ()));
+                portLocations.add(new Location(minLocation.getWorld(), area.getMinMinLocation().getBlockX()+i, 0, area.getMinMinLocation().getBlockZ()-2));
             }
         }
     }
@@ -186,6 +206,12 @@ public class Kingdom extends KingdomSettings{
     public ArrayList<UUID> getMembers(){
         return members;
     }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
 
 
     public void setParticleType(Particle p){
@@ -208,6 +234,12 @@ public class Kingdom extends KingdomSettings{
     }
     public int getRunnableId(){
         return particleRunnableId;
+    }
+    public Cuboid2d getCheckArea() {
+        return checkArea;
+    }
+    public void setCheckArea(Cuboid2d checkArea) {
+        this.checkArea = checkArea;
     }
 
     public void openSeeOwner(Player player){
