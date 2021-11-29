@@ -1,5 +1,6 @@
 package com.plugin.kingdoms.main;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -15,20 +16,35 @@ public class KingdomManager {
     private List<Kingdom> unfinishedKingdomList;
     private Map<UUID, Kingdom> playersInKingdoms;
 
+    private Map<UUID, Kingdom> playersInKingdomSettings;
+
     private File datafile;
-    private FileConfiguration configFile;
     private YamlConfiguration changeDataFile;
+
+    private YamlConfiguration messageFile;
+    private File MessagesFile;
 
     public KingdomManager() throws IOException {
         kingdomList = new ArrayList<>();
         unfinishedKingdomList = new ArrayList<>();
         playersInKingdoms = new HashMap<>();
 
-        configFile = Kingdoms.getInstance().getConfig();
-
         datafile = new File(Kingdoms.getInstance().getDataFolder(), "data.yml");
-        if(datafile.exists()){
+        if(!datafile.exists()){
             datafile.createNewFile();
+        }
+        if(Kingdoms.getInstance().getConfig().getBoolean("generatemessagefile")) {
+            MessagesFile = new File(Kingdoms.getInstance().getDataFolder(), "messages.yml");
+            if (!MessagesFile.exists()) {
+                MessagesFile.createNewFile();
+                messageFile = YamlConfiguration.loadConfiguration(MessagesFile);
+                //Set all the messages
+                setMessages();
+            }
+
+            messageFile = YamlConfiguration.loadConfiguration(MessagesFile);
+            messageFile.save(MessagesFile);
+            loadMessages();
         }
 
         changeDataFile = YamlConfiguration.loadConfiguration(datafile);
@@ -45,11 +61,17 @@ public class KingdomManager {
     public void addKingdomToList(Kingdom k){
         kingdomList.add(k);
     }
+    public Map<UUID, Kingdom> getPlayersInKingdomSettings() {
+        return playersInKingdomSettings;
+    }
     public void removeKingdomFromList(Kingdom k){
         kingdomList.remove(k);
     }
     public void clearKingdomList(){
         kingdomList.clear();
+    }
+    public YamlConfiguration getMessageFile() {
+        return messageFile;
     }
 
     public Map<UUID, Kingdom> getPlayersInKingdoms(){
@@ -74,6 +96,7 @@ public class KingdomManager {
             changeDataFile.set("kingdoms."+i+".minloc", k.getMinLocation());
             changeDataFile.set("kingdoms."+i+".maxloc", k.getMaxLocation());
             changeDataFile.set("kingdoms."+i+".name", k.getName());
+            changeDataFile.set("kingdoms."+i+".toptitle", k.getTopTitle());
             if(k.getParticleType() != null) {
                 changeDataFile.set("kingdoms." + i + ".particle", k.getParticleType().toString());
             }
@@ -141,6 +164,7 @@ public class KingdomManager {
                 boolean pets = changeDataFile.getBoolean("kingdoms."+i+".pets");
                 int hitpets = changeDataFile.getInt("kingdoms."+i+".hitpets");
                 int enter = changeDataFile.getInt("kingdoms."+i+".enter");
+                String topTitle = changeDataFile.getString("kingdoms."+i+".toptitle");
 
                 //Port locs, part locs, admins and members
                 //Deleted for faster loads and saving times, as well as shorter data.yml files
@@ -169,7 +193,7 @@ public class KingdomManager {
                     }
                 }
 
-                Kingdom idk = new Kingdom(owner, minLocation, maxLocation, type, particleAmount, interact, destroyblocks, settings, addadmins, addmembers, removeadmins, removemembers, pvp, pets, hitpets, enter, admins, members, tnt, name);
+                Kingdom idk = new Kingdom(owner, minLocation, maxLocation, type, particleAmount, interact, destroyblocks, settings, addadmins, addmembers, removeadmins, removemembers, pvp, pets, hitpets, enter, admins, members, tnt, name, topTitle);
                 kingdomList.add(idk);
 
             }
@@ -177,5 +201,25 @@ public class KingdomManager {
 
     }
 
+    private void setMessages() {
+        //Set all the messages in the file
+        messageFile.options().header("All the messages with their description of what they do.\n"+
+                "When using Colorcodes (& for Chatcolor) put '' around the messages, else it'll delete them."+"\n"+
+                "When the Message end like this 'The Kingdoms new title is ' there will be a name/title after the 'is ', be aware of this.");
+        for(Messages message : Messages.values()){
+            messageFile.set(message.name(), message.getMessage());
+        }
+        try {
+            messageFile.save(MessagesFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadMessages(){
+        for(String key : messageFile.getConfigurationSection("").getKeys(false)){
+            Messages.valueOf(key).setMessage(ChatColor.translateAlternateColorCodes('&', messageFile.getString(key)));
+        }
+    }
 }
 

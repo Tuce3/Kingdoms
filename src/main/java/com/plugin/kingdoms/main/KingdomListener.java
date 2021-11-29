@@ -1,6 +1,7 @@
 package com.plugin.kingdoms.main;
 
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
@@ -13,11 +14,11 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class KingdomListener implements Listener {
 
@@ -25,22 +26,22 @@ public class KingdomListener implements Listener {
         if(k.getAdmins().contains(p.getUniqueId())){
             if(settings == 4){
                 c.setCancelled(true);
-                p.sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
+                p.sendMessage(Messages.NORIGHTSACTION.getMessage());
             }
         }else if(k.getOwner().equals(p.getUniqueId())){
             if(settings > 4){
                 c.setCancelled(true);
-                p.sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
+                p.sendMessage(Messages.NORIGHTSACTION.getMessage());
             }
         }else if(k.getMembers().contains(p.getUniqueId())){
             if(settings > 2){
                 c.setCancelled(true);
-                p.sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
+                p.sendMessage(Messages.NORIGHTSACTION.getMessage());
             }
         }else{
             if(settings > 1){
                 c.setCancelled(true);
-                p.sendMessage(ChatColor.RED + "You don't have the rights to perform this action!");
+                p.sendMessage(Messages.NORIGHTSACTION.getMessage());
             }
         }
     }
@@ -106,15 +107,19 @@ public class KingdomListener implements Listener {
                         }
                     }
                     if(player.isOp()) isAllowed = true;
-
-                    if(k.getArea().containsLocation(e.getPlayer().getLocation().getBlock().getLocation()) && isAllowed){
+                    if(Bukkit.getOfflinePlayer(k.getOwner()).isBanned()) isAllowed = true;
+                    if((k.getArea().containsLocation(e.getPlayer().getLocation().getBlock().getLocation()) && isAllowed)){
                         Kingdoms.getManager().getPlayersInKingdoms().put(player.getUniqueId(), k);
                         if(k.getName() == null){
                             player.sendTitle(ChatColor.AQUA + "You entered a Kingdom", ChatColor.AQUA + "of " + ChatColor.AQUA + Bukkit.getOfflinePlayer(k.getOwner()).getName(), 10, 50, 10);
                         }else{
-                            player.sendTitle(ChatColor.AQUA + "You entered", ChatColor.AQUA + k.getName(), 10, 50, 10);
+                            if(k.getTopTitle() == null){
+                                player.sendTitle(ChatColor.AQUA + "You entered", ChatColor.AQUA + k.getName(), 10, 50, 10);
+                            }else{
+                                player.sendTitle(ChatColor.AQUA + k.getTopTitle(), ChatColor.AQUA + k.getName(), 10, 50, 10);
+                            }
                         }
-                    }else if(k.getArea().containsLocation(e.getPlayer().getLocation().getBlock().getLocation()) && !isAllowed){
+                    }else if((k.getArea().containsLocation(e.getPlayer().getLocation().getBlock().getLocation()) && !isAllowed)){
                         Location portLocation = player.getLocation();
                         double smallestDistance = -5;
                         for(Location loc : k.getPortLocations()){
@@ -128,12 +133,14 @@ public class KingdomListener implements Listener {
                                 }
                             }
                         }
-
-                        player.teleport(new Location(portLocation.getWorld(), portLocation.getBlockX(), portLocation.getWorld().getHighestBlockAt(portLocation).getLocation().getY()+ 1, portLocation.getBlockZ(), player.getLocation().getYaw(), player.getLocation().getPitch()));
+                        Block portLocY = new Location(player.getWorld(), portLocation.getBlockX(), player.getLocation().getBlockY(), portLocation.getBlockZ()).getBlock();
+                        player.teleport(new Location(portLocation.getWorld(), portLocation.getBlockX(),
+                                (portLocY.getRelative(0, 1, 0).getType() == Material.AIR || portLocY.getRelative(0, 1, 0).getType() == Material.CAVE_AIR) && (portLocY.getType() == Material.AIR || portLocY.getType() == Material.CAVE_AIR)? player.getLocation().getY() : portLocation.getWorld().getHighestBlockAt(portLocation).getLocation().getY()+ 1,
+                                portLocation.getBlockZ(), player.getLocation().getYaw(), player.getLocation().getPitch()));
                         if(k.getName() == null){
-                            e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to enter the Kingdom of "+ChatColor.RED+Bukkit.getOfflinePlayer(k.getOwner()).getName()+ChatColor.RED+"!");
+                            e.getPlayer().sendMessage(Messages.NORIGHTSENTERKINGDOM.getMessage()+ChatColor.RED+Bukkit.getOfflinePlayer(k.getOwner()).getName()+ChatColor.RED+"!");
                         }else{
-                            e.getPlayer().sendMessage(ChatColor.RED + "You don't have the rights to enter "+ ChatColor.RED+k.getName()+ChatColor.RED+"!");
+                            e.getPlayer().sendMessage(Messages.NORIGHTSENTERKINGDOMNAME.getMessage()+ ChatColor.RED+k.getName()+ChatColor.RED+"!");
                         }
                     }
                 }
@@ -152,15 +159,16 @@ public class KingdomListener implements Listener {
 
         Player player = (Player) e.getWhoClicked();
 
-        if(!e.getView().getTitle().contains(ChatColor.GOLD+ "settings") && !e.getView().getTitle().contains("settings")) return;
+        //if(!e.getView().getTitle().contains(ChatColor.GOLD+ "settings") && !e.getView().getTitle().contains("settings")) return;
 
-        e.setCancelled(true);
+        //e.setCancelled(true);
 
-        if(!Kingdoms.getManager().getPlayersInKingdoms().containsKey(player.getUniqueId())) return;
+        if(!Kingdoms.getManager().getPlayersInKingdoms().containsKey(player.getUniqueId()) && !Kingdoms.getManager().getPlayersInKingdomSettings().containsKey(player.getUniqueId())) return;
 
-        Kingdom k = Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId());
+        Kingdom k = Kingdoms.getManager().getPlayersInKingdoms().containsKey(player.getUniqueId()) ? Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId()) : Kingdoms.getManager().getPlayersInKingdomSettings().get(player.getUniqueId());
 
-        if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "settings")){
+        if(e.getView().getTitle().equalsIgnoreCase(Messages.SETTINGSITEM.getMessage())){
+            e.setCancelled(true);
             if (e.getCurrentItem().equals(KingdomInterface.accessSettings)) {
                 k.openAccessSettingsGui(player);
             }else if(e.getCurrentItem().equals(KingdomInterface.addremoveadminsmembers)){
@@ -182,10 +190,12 @@ public class KingdomListener implements Listener {
             }else if(e.getCurrentItem().equals(KingdomInterface.enterKingdomSettings)){
                 k.openEnterKingdom(player);
             }
-        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"access settings")) {
+        }else if(e.getView().getTitle().equalsIgnoreCase(Messages.ACCESSSETTINGINVENTORYNAME.getMessage())) {
+            e.setCancelled(true);
             k.setSettings(checkSlot(e.getRawSlot()));
             k.openAccessSettingsGui(player);
-        }else if(e.getView().getTitle().equals(ChatColor.GOLD  + "Add and remove settings")){
+        }else if(e.getView().getTitle().equals(Messages.ADDANDREMOVESETTINGSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
             if(e.getRawSlot() == 1){
                 k.openAddAdmins(player);
             }else if(e.getRawSlot() == 3){
@@ -195,19 +205,24 @@ public class KingdomListener implements Listener {
             }else if(e.getRawSlot() == 7){
                 k.openAddMembers(player);
             }
-        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"remove members settings")){
+        }else if(e.getView().getTitle().equalsIgnoreCase(Messages.REMOVEMEMBERSETTINGSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
             k.setRemoveMembers(checkSlot(e.getRawSlot()));
             k.openRemMembers(player);
-        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"add members settings")){
+        }else if(e.getView().getTitle().equalsIgnoreCase(Messages.ADDMEMBERSSETTINGSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
             k.setAddMembers(checkSlot(e.getRawSlot()));
             k.openAddMembers(player);
-        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"remove admins settings")){
+        }else if(e.getView().getTitle().equalsIgnoreCase(Messages.REMOVEADMINSSETTINGSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
             k.setRemoveAdmins(checkSlot(e.getRawSlot()));
             k.openRemAdmins(player);
-        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"add admins settings")){
+        }else if(e.getView().getTitle().equalsIgnoreCase(Messages.ADDADMINSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
             k.setAddAdmins(checkSlot(e.getRawSlot()));
             k.openAddAdmins(player);
-        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"Particle settings")){
+        }else if(e.getView().getTitle().equalsIgnoreCase(Messages.PARTICLESETTINGSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
             if (e.getRawSlot() == 11) {
                 k.setParticleType(Particle.VILLAGER_HAPPY);
                 k.setParticleAmount(2);
@@ -226,7 +241,8 @@ public class KingdomListener implements Listener {
 
             k.openBorderParticleColor(player);
 
-        }else if(e.getView().getTitle().equals(ChatColor.GOLD + "TnT settings")){
+        }else if(e.getView().getTitle().equals(Messages.TNTSETTINGSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
 
             if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
                 if (e.getRawSlot() == 14) {
@@ -237,7 +253,8 @@ public class KingdomListener implements Listener {
 
                 k.openTnT(player);
             }
-        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Admins, Owner and Members settings")){
+        }else if(e.getView().getTitle().equalsIgnoreCase(Messages.ADMINSOWNERANDMEMBERSETTINGSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
             if(e.getRawSlot() == 2){
                 k.openSeeMembers(player, 1);
             }else if(e.getRawSlot() == 4){
@@ -245,28 +262,34 @@ public class KingdomListener implements Listener {
             }else if(e.getRawSlot() == 6){
                 k.openSeeOwner(player);
             }
-        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Admins settings")){
+        }else if(e.getView().getTitle().equalsIgnoreCase(Messages.ADMINSSETTINGSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
             if(e.getCurrentItem().getType() == Material.TIPPED_ARROW && e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Next page")){
                 k.openSeeAdmins(player, Integer.parseInt(e.getCurrentItem().getItemMeta().getLocalizedName())+1);
             }else if(e.getCurrentItem().getType() == Material.TIPPED_ARROW && e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Last page")){
                 k.openSeeAdmins(player, Integer.parseInt(e.getCurrentItem().getItemMeta().getLocalizedName())-1);
             }
-        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Members settings")){
+        }else if(e.getView().getTitle().equalsIgnoreCase(Messages.MEMBERSSETTINGSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
             if(e.getCurrentItem().getType() == Material.TIPPED_ARROW && e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Next page")){
                 k.openSeeMembers(player, Integer.parseInt(e.getCurrentItem().getItemMeta().getLocalizedName())+1);
             }else if(e.getCurrentItem().getType() == Material.TIPPED_ARROW && e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Last page")){
                 k.openSeeMembers(player, Integer.parseInt(e.getCurrentItem().getItemMeta().getLocalizedName())-1);
             }
-        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"Block settings")){
+        }else if(e.getView().getTitle().equalsIgnoreCase(Messages.BLOCKSETTINGSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
             k.setDestroyBlocks(checkSlot(e.getRawSlot()));
             k.openDestroyPlaceBlocks(player);
-        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD  +"Interact settings")){
+        }else if(e.getView().getTitle().equalsIgnoreCase(Messages.INTERACTSETTINGSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
             k.setInteract(checkSlot(e.getRawSlot()));
             k.openInteractInventory(player);
-        }else if(e.getView().getTitle().equals(ChatColor.GOLD + "PvP settings")){
+        }else if(e.getView().getTitle().equals(Messages.PVPSETTINGSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
             k.setPvP(checkSlot(e.getRawSlot()));
             k.openPvPInventory(player);
-        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Pet settings")){
+        }else if(e.getView().getTitle().equalsIgnoreCase(Messages.PETSETTINGSINVENTORY.getMessage())){
+            e.setCancelled(true);
 
             if(e.getRawSlot() == 3){
                 k.openInvulnerablePetsInventory(player);
@@ -274,7 +297,8 @@ public class KingdomListener implements Listener {
                 k.openDamagePetsInventory(player);
             }
 
-        }else if(e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Invulnerable Pets settings")){
+        }else if(e.getView().getTitle().equalsIgnoreCase(Messages.INVULNERABLEPETSSETTINGSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
             if (e.getCurrentItem().equals(KingdomInterface.deactivated)) {
                 if (e.getRawSlot() == 12) {
                     k.setInvulnerablePets(true);
@@ -285,10 +309,12 @@ public class KingdomListener implements Listener {
                 k.openInvulnerablePetsInventory(player);
             }
 
-        }else if(e.getView().getTitle().equals(ChatColor.GOLD + "Damage Pets settings")){
+        }else if(e.getView().getTitle().equals(Messages.DAMAGEPETSETTINGSINVENTORYNAME.getMessage())){
+            e.setCancelled(true);
             k.setDamagePets(checkSlot(e.getRawSlot()));
             k.openDamagePetsInventory(player);
-        }else if(e.getView().getTitle().equals(ChatColor.GOLD + "Enter Kingdom settings")){
+        }else if(e.getView().getTitle().equals(Messages.ENTERKINGDOMSETTINGS.getMessage())){
+            e.setCancelled(true);
             k.setEnterKingdom(checkSlot(e.getRawSlot()));
             k.openEnterKingdom(player);
         }
@@ -304,10 +330,32 @@ public class KingdomListener implements Listener {
                 }
             }
         }
+        if(Kingdoms.getInstance().getConfig().getBoolean("destroyoutsideofkingdom")) return;
+        List<Material> blockMaterials = new ArrayList<>();
+        List<Location> blockLocs = new ArrayList<>();
+        for (Kingdom k : Kingdoms.getManager().getKingdomList()){
+            if(!k.getArea().containsLocation(e.getLocation()) && k.getTntCheckArea().containsLocation(e.getLocation())){
+                for(Block block : e.blockList()){
+                    if(k.getArea().containsLocation(block.getLocation())){
+                        blockMaterials.add(block.getType());
+                        blockLocs.add(block.getLocation());
+                    }
+                }
+            }
+        }
+        Bukkit.getScheduler().runTaskLater(Kingdoms.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                for(int i = 0; i < blockLocs.size(); i++){
+                    blockLocs.get(i).getBlock().setType(blockMaterials.get(i));
+                }
+            }
+        }, 1L);
     }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e){
+        if(e.getPlayer().isOp()) return;
         for(Kingdom k : Kingdoms.getManager().getKingdomList()){
             if(k.getArea().containsLocation(e.getBlock().getLocation())){
                 checkAllowed(k.getDestroyBlocks(), e,e.getPlayer(), k);
@@ -381,4 +429,30 @@ public class KingdomListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onBan(PlayerKickEvent e){
+        if(e.getPlayer().isBanned() && Kingdoms.getInstance().getConfig().getBoolean("deleteonban")){
+            for(int i = 0; i < Kingdoms.getManager().getKingdomList().size(); i++){
+                Kingdom k = Kingdoms.getManager().getKingdom(i);
+                if(k.getOwner().equals(e.getPlayer().getUniqueId())){
+                    Kingdoms.getManager().removeKingdomFromList(k);
+                    if(k.getRunnableId() != 0)Bukkit.getScheduler().cancelTask(k.getRunnableId());
+                    Kingdoms.getManager().safeData();
+                }
+            }
+        }
+    }
+    @EventHandler
+    public void onBan(PlayerQuitEvent e){
+        if(e.getPlayer().isBanned() && Kingdoms.getInstance().getConfig().getBoolean("deleteonban")){
+            for(int i = 0; i < Kingdoms.getManager().getKingdomList().size(); i++){
+                Kingdom k = Kingdoms.getManager().getKingdom(i);
+                if(k.getOwner().equals(e.getPlayer().getUniqueId())){
+                    Kingdoms.getManager().removeKingdomFromList(k);
+                    if(k.getRunnableId() != 0)Bukkit.getScheduler().cancelTask(k.getRunnableId());
+                    Kingdoms.getManager().safeData();
+                }
+            }
+        }
+    }
 }

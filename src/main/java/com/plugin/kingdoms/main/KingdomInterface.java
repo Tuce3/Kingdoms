@@ -21,29 +21,28 @@ public interface KingdomInterface {
     int hitPets = Kingdoms.getInstance().getConfig().getInt("hitPets");
     int enterKingdom = Kingdoms.getInstance().getConfig().getInt("enterKingdom");
 
-    ItemStack activated = Utils.itemBuilder(Material.LIME_DYE, 1, ChatColor.GREEN + "Activated", null, null);
+    ItemStack activated = Utils.itemBuilder(Material.LIME_DYE, 1, Messages.ACTIVATEDITEM.getMessage(), null, null);
 
-    ItemStack deactivated = Utils.itemBuilder(Material.GRAY_DYE, 1, ChatColor.GREEN + "Deactivated", null, null);
+    ItemStack deactivated = Utils.itemBuilder(Material.GRAY_DYE, 1, Messages.DEACTIVATEDITEM.getMessage(), null, null);
 
+    ItemStack viewMembers = Utils.itemBuilder(Material.PLAYER_HEAD, 1, Messages.VIEWADMINSANDMEMBERSITEM.getMessage(), null, null);
 
-    ItemStack viewMembers = Utils.itemBuilder(Material.PLAYER_HEAD, 1, ChatColor.GOLD + "View Members and Admins", null, null);
+    ItemStack accessSettings = Utils.itemBuilder(Material.BARRIER, 1, Messages.SETTINGSITEM.getMessage(), null, Messages.SETTINGSLOREITEM.getMessage());
 
-    ItemStack accessSettings = Utils.itemBuilder(Material.BARRIER, 1, ChatColor.GOLD + "Settings", null, ChatColor.DARK_GREEN + "Manage who can change", ChatColor.DARK_GREEN + "settings");
+    ItemStack blockSettings = Utils.itemBuilder(Material.COBBLESTONE, 1, Messages.DESTROYPLACEBLOCKSITEM.getMessage(), null, Messages.DESTROYPLACEBLOCKLOREITEM.getMessage());
 
-    ItemStack blockSettings = Utils.itemBuilder(Material.COBBLESTONE, 1, ChatColor.GOLD + "Destroy/place Blocks", null, ChatColor.DARK_GREEN + "Manage who can place/destroy blocks");
+    ItemStack Pvp = Utils.itemBuilder(Material.WOODEN_SWORD, 1, Messages.PVPSETTINGSITEM.getMessage(), null, Messages.PVPSETTINGSLOREITEM.getMessage());
 
-    ItemStack Pvp = Utils.itemBuilder(Material.WOODEN_SWORD, 1, ChatColor.GOLD+"PvP settings", null, ChatColor.DARK_GREEN + "Manage who can PvP");
+    ItemStack addremoveadminsmembers = Utils.itemBuilder(Material.SKELETON_SKULL, 1,Messages.REMOVEADDROLESITEM.getMessage(), null, Messages.REMOVEADDROLESLORE1ITEM.getMessage(),Messages.REMOVEADDROLESLORE2ITEM.getMessage() );
 
-    ItemStack addremoveadminsmembers = Utils.itemBuilder(Material.SKELETON_SKULL, 1, ChatColor.GOLD+"Remove/add roles", null, ChatColor.DARK_GREEN + "Manage who can add/remove", ChatColor.DARK_GREEN + "Admin and Member rights");
+    ItemStack enterKingdomSettings = Utils.itemBuilder(Material.LEATHER_BOOTS, 1, Messages.ACCESSSETTINGSITEM.getMessage(), null, Messages.ACCESSSETTINGSLORE1ITEM.getMessage(), Messages.ACCESSSETTINGSLORE2ITEM.getMessage());
 
-    ItemStack enterKingdomSettings = Utils.itemBuilder(Material.LEATHER_BOOTS, 1, ChatColor.GOLD + "Access settings", null, ChatColor.DARK_GREEN +"Change who can ", ChatColor.DARK_GREEN +"enter the kingdom");
+    ItemStack TnT = Utils.itemBuilder(Material.TNT, 1, Messages.TNTITEM.getMessage(), null, Messages.TNTLOREITEM.getMessage());
 
-    ItemStack TnT = Utils.itemBuilder(Material.TNT, 1, ChatColor.GOLD + "TnT", null, ChatColor.DARK_GREEN + "Manage if TnT should explode");
+    ItemStack particleColor = Utils.itemBuilder(Material.LIME_DYE, 1, Messages.PARTICLEITEM.getMessage(), null, Messages.PARTICLELOREITEM.getMessage());
 
-    ItemStack particleColor = Utils.itemBuilder(Material.LIME_DYE, 1, ChatColor.GOLD + "Particle Color", null, ChatColor.DARK_GREEN + "Change the Particle Color");
+    ItemStack invulnerablePets = Utils.itemBuilder(Material.NAME_TAG, 1, Messages.PETSITEM.getMessage(), null, Messages.PETSLOREITEM.getMessage());
 
-    ItemStack invulnerablePets = Utils.itemBuilder(Material.NAME_TAG, 1, ChatColor.GOLD + "Pets", null, ChatColor.DARK_GREEN + "Manage Pets");
-
-    ItemStack interactSettings = Utils.itemBuilder(Material.SPRUCE_SIGN, 1, ChatColor.GOLD + "Interact", null, ChatColor.DARK_GREEN + "Manage who can ", ChatColor.DARK_GREEN + "Right click and hit Mobs");
+    ItemStack interactSettings = Utils.itemBuilder(Material.SPRUCE_SIGN, 1,Messages.INTERACTITEM.getMessage(), null, Messages.INTERACTLORE1ITEM.getMessage(), Messages.INTERACTLORE2ITEM.getMessage());
 
 }

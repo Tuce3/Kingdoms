@@ -3,9 +3,7 @@ package com.plugin.kingdoms.main;
 
 import com.plugin.kingdoms.main.Utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -147,7 +145,7 @@ public class KingdomSettings implements KingdomInterface{
 
 
     public void openSettingsGui(Player player){
-        Inventory gui = Bukkit.createInventory(null, 36, ChatColor.GOLD + "settings");
+        Inventory gui = Bukkit.createInventory(null, 36, Messages.SETTINGSINVENTORYNAME.getMessage());
 
 
         gui.setItem(4, KingdomInterface.accessSettings);
@@ -167,82 +165,81 @@ public class KingdomSettings implements KingdomInterface{
 
     public void openAccessSettingsGui(Player player){
 
-        Inventory gui = Bukkit.createInventory(null, 27, ChatColor.GOLD + "Access settings");
+        Inventory gui = Bukkit.createInventory(null, 27, Messages.ACCESSSETTINGINVENTORYNAME.getMessage());
 
-        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,ChatColor.YELLOW + "Everyone", null, "Everyone can access the settings"));
-        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,ChatColor.GOLD + "Members", null, "Members+ can access the settings"));
-        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,ChatColor.RED + "Admins", null, "Admins and the Owner can access the settings"));
-        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,ChatColor.GREEN + "Owner", null, "Only the Owner can access the settings"));
+        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,Messages.EVERYONEITEMNAME.getMessage(), null, Messages.EVERYONERIGHTITEMLORE.getMessage()+Messages.ACCESSSETTINGSRIGHT.getMessage()));
+        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,Messages.MEMBERSITEMNAME.getMessage(), null, Messages.MEMBERSPLUSRIGHTITEMLORE.getMessage()+Messages.ACCESSSETTINGSRIGHT.getMessage()));
+        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,Messages.ADMINSITEMNAME.getMessage(), null, Messages.ADMINSANDOWNERRIGHTITEMLORE.getMessage()+Messages.ACCESSSETTINGSRIGHT.getMessage()));
+        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,Messages.OWNERITEMNAME.getMessage(), null, Messages.OWNERRIGHTITEMLORE.getMessage()+Messages.ACCESSSETTINGSRIGHT.getMessage()));
 
         player.openInventory(setActivated(gui, settings));
 
     }
 
     public void openAddMembers(Player player){
-        Inventory gui = Bukkit.createInventory(null, 27, ChatColor.GOLD + "Add Members settings");
+        Inventory gui = Bukkit.createInventory(null, 27, Messages.ADDMEMBERSSETTINGSINVENTORYNAME.getMessage());
 
-        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,ChatColor.YELLOW + "Everyone", null, "Everyone can add Members"));
-        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,ChatColor.GOLD + "Members", null, "Members+ can add Members"));
-        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,ChatColor.RED + "Admins", null, "Admins and the Owner can add Members"));
-        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,ChatColor.GREEN + "Owner", null, "Only the Owner can add Members"));
+        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,Messages.EVERYONEITEMNAME.getMessage(), null, Messages.EVERYONERIGHTITEMLORE.getMessage()+Messages.ADDMEMBERSRIGHT.getMessage()));
+        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,Messages.MEMBERSITEMNAME.getMessage(), null, Messages.MEMBERSPLUSRIGHTITEMLORE.getMessage()+Messages.ADDMEMBERSRIGHT.getMessage()));
+        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,Messages.ADMINSITEMNAME.getMessage(), null, Messages.ADMINSANDOWNERRIGHTITEMLORE.getMessage()+Messages.ADDMEMBERSRIGHT.getMessage()));
+        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,Messages.OWNERITEMNAME.getMessage(), null, Messages.OWNERRIGHTITEMLORE.getMessage()+Messages.ADDMEMBERSRIGHT.getMessage()));
 
         player.openInventory(setActivated(gui, addMembers));
     }
 
     public void openAddAdmins(Player player){
-        Inventory gui = Bukkit.createInventory(null, 27, ChatColor.GOLD + "Add Admins settings");
+        Inventory gui = Bukkit.createInventory(null, 27, Messages.ADDADMINSINVENTORYNAME.getMessage());
 
-        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,ChatColor.YELLOW + "Everyone", null, "Everyone can add Admins"));
-        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,ChatColor.GOLD + "Members", null, "Members+ can add Admins"));
-        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,ChatColor.RED + "Admins", null, "Admins and the Owner can add Admins"));
-        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,ChatColor.GREEN + "Owner", null, "Only the Owner can add Admins"));
+        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,Messages.EVERYONEITEMNAME.getMessage(), null, Messages.EVERYONERIGHTITEMLORE.getMessage()+Messages.ADDADMINSRIGHT.getMessage()));
+        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,Messages.MEMBERSITEMNAME.getMessage(), null, Messages.MEMBERSPLUSRIGHTITEMLORE.getMessage()+Messages.ADDADMINSRIGHT.getMessage()));
+        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,Messages.ADMINSITEMNAME.getMessage(), null, Messages.ADMINSANDOWNERRIGHTITEMLORE.getMessage()+Messages.ADDADMINSRIGHT.getMessage()));
+        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,Messages.OWNERITEMNAME.getMessage(), null, Messages.OWNERRIGHTITEMLORE.getMessage()+Messages.ADDADMINSRIGHT.getMessage()));
 
         player.openInventory(setActivated(gui, addAdmins));
     }
 
     public void openRemAdmins(Player player){
-        Inventory gui = Bukkit.createInventory(null, 27, ChatColor.GOLD + "Remove Admins settings");
+        Inventory gui = Bukkit.createInventory(null, 27, Messages.REMOVEADMINSSETTINGSINVENTORYNAME.getMessage());
 
-        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,ChatColor.YELLOW + "Everyone", null, "Everyone can remove Admins"));
-        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,ChatColor.GOLD + "Members", null, "Members+ can remove Admins"));
-        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,ChatColor.RED + "Admins", null, "Admins and the Owner can remove Admins"));
-        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,ChatColor.GREEN + "Owner", null, "Only the Owner can remove Admins"));
+        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,Messages.EVERYONEITEMNAME.getMessage(), null, Messages.EVERYONERIGHTITEMLORE.getMessage()+Messages.REMOVEADMINSRIGHT.getMessage()));
+        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,Messages.MEMBERSITEMNAME.getMessage(), null, Messages.MEMBERSPLUSRIGHTITEMLORE.getMessage()+Messages.REMOVEADMINSRIGHT.getMessage()));
+        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,Messages.ADMINSITEMNAME.getMessage(), null, Messages.ADMINSANDOWNERRIGHTITEMLORE.getMessage()+Messages.REMOVEADMINSRIGHT.getMessage()));
+        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,Messages.OWNERITEMNAME.getMessage(), null, Messages.OWNERRIGHTITEMLORE.getMessage()+Messages.REMOVEADMINSRIGHT.getMessage()));
 
         player.openInventory(setActivated(gui, removeAdmins));
     }
 
     public void openRemMembers(Player player){
-        Inventory gui = Bukkit.createInventory(null, 27, ChatColor.GOLD + "Remove Members settings");
+        Inventory gui = Bukkit.createInventory(null, 27, Messages.REMOVEMEMBERSETTINGSINVENTORYNAME.getMessage());
 
-        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,ChatColor.YELLOW + "Everyone", null, "Everyone can remove Members"));
-        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,ChatColor.GOLD + "Members", null, "Members+ can remove Members"));
-        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,ChatColor.RED + "Admins", null, "Admins and the Owner can remove Members"));
-        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,ChatColor.GREEN + "Owner", null, "Only the Owner can remove Members"));
+        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,Messages.EVERYONEITEMNAME.getMessage(), null, Messages.EVERYONERIGHTITEMLORE.getMessage()+Messages.REMOVEMEMBERRIGHT.getMessage()));
+        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,Messages.MEMBERSITEMNAME.getMessage(), null, Messages.MEMBERSPLUSRIGHTITEMLORE.getMessage()+Messages.REMOVEMEMBERRIGHT.getMessage()));
+        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,Messages.ADMINSITEMNAME.getMessage(), null, Messages.ADMINSANDOWNERRIGHTITEMLORE.getMessage()+Messages.REMOVEMEMBERRIGHT.getMessage()));
+        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,Messages.OWNERITEMNAME.getMessage(), null, Messages.OWNERRIGHTITEMLORE.getMessage()+Messages.REMOVEMEMBERRIGHT.getMessage()));
 
         player.openInventory(setActivated(gui, removeMembers));
     }
 
     public void openAddRemoveMembersAdmins(Player player){
 
-        Inventory gui = Bukkit.createInventory(null, 9, ChatColor.GOLD + "Add and remove settings");
+        Inventory gui = Bukkit.createInventory(null, 9, Messages.ADDANDREMOVESETTINGSINVENTORYNAME.getMessage());
 
 
-        gui.setItem(1, Utils.itemBuilder(Material.YELLOW_DYE, 1,ChatColor.YELLOW + "Add Admins", null, null));
-        gui.setItem(3, Utils.itemBuilder(Material.ORANGE_DYE, 1,ChatColor.GOLD + "Remove Admins", null, null));
-        gui.setItem(5, Utils.itemBuilder(Material.RED_DYE, 1,ChatColor.RED + "Remove Members", null, null));
-        gui.setItem(7, Utils.itemBuilder(Material.GREEN_DYE, 1,ChatColor.GREEN + "Add Members", null, null));
+        gui.setItem(1, Utils.itemBuilder(Material.YELLOW_DYE, 1,Messages.ADDADMINSITEM.getMessage(), null, null));
+        gui.setItem(3, Utils.itemBuilder(Material.ORANGE_DYE, 1,Messages.REMOVEADMINSITEM.getMessage(), null, null));
+        gui.setItem(5, Utils.itemBuilder(Material.RED_DYE, 1,Messages.REMOVEMEMBERSITEM.getMessage(), null, null));
+        gui.setItem(7, Utils.itemBuilder(Material.GREEN_DYE, 1,Messages.ADDMEMBERSITEM.getMessage(), null, null));
 
         player.openInventory(gui);
-
 
     }
 
     public void openTnT(Player player){
 
-        Inventory gui = Bukkit.createInventory(null, 18, ChatColor.GOLD + "TnT settings");
+        Inventory gui = Bukkit.createInventory(null, 18, Messages.TNTSETTINGSINVENTORYNAME.getMessage());
 
-        gui.setItem(3, Utils.itemBuilder(Material.LIME_DYE, 1, ChatColor.GREEN + "Activate", null, null));
-        gui.setItem(5, Utils.itemBuilder(Material.RED_DYE, 1, ChatColor.GREEN + "Deactivate", null, null));
+        gui.setItem(3, Utils.itemBuilder(Material.LIME_DYE, 1, Messages.TNTACTIVATEDITEM.getMessage(), null, null));
+        gui.setItem(5, Utils.itemBuilder(Material.RED_DYE, 1, Messages.TNTDEACTIVATEDITEM.getMessage(), null, null));
 
         if(TnTActive){
             gui.setItem(12, activated);
@@ -258,11 +255,11 @@ public class KingdomSettings implements KingdomInterface{
 
     public void openSeeAdminsMembers(Player player){
 
-        Inventory gui = Bukkit.createInventory(null, 9, ChatColor.GOLD + "Admins, Owner and Members settings");
+        Inventory gui = Bukkit.createInventory(null, 9, Messages.ADMINSOWNERANDMEMBERSETTINGSINVENTORYNAME.getMessage());
 
-        gui.setItem(2, Utils.itemBuilder(Material.ORANGE_DYE, 1,ChatColor.GOLD + "Members", null, null));
-        gui.setItem(4, Utils.itemBuilder(Material.RED_DYE, 1,ChatColor.RED + "Admins", null, null));
-        gui.setItem(6, Utils.itemBuilder(Material.GREEN_DYE, 1,ChatColor.GREEN + "Owner", null, null));
+        gui.setItem(2, Utils.itemBuilder(Material.ORANGE_DYE, 1,Messages.VIEWMEMBERSITEM.getMessage(), null, null));
+        gui.setItem(4, Utils.itemBuilder(Material.RED_DYE, 1,Messages.VIEWADMINSITEM.getMessage(), null, null));
+        gui.setItem(6, Utils.itemBuilder(Material.GREEN_DYE, 1,Messages.VIEWOWNER.getMessage(), null, null));
 
         player.openInventory(gui);
 
@@ -270,12 +267,12 @@ public class KingdomSettings implements KingdomInterface{
 
     public void openDestroyPlaceBlocks(Player player){
 
-        Inventory gui = Bukkit.createInventory(null, 27, ChatColor.GOLD + "Block settings");
+        Inventory gui = Bukkit.createInventory(null, 27, Messages.BLOCKSETTINGSINVENTORYNAME.getMessage());
 
-        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,ChatColor.YELLOW + "Everyone", null, "Everyone can destory/place blocks"));
-        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,ChatColor.GOLD + "Members", null, "Members+ can destory/place blocks"));
-        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,ChatColor.RED + "Admins", null, "Admins and the Owner can adestory/place blocks"));
-        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,ChatColor.GREEN + "Owner", null, "Only the Owner can destory/place blocks"));
+        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,Messages.EVERYONEITEMNAME.getMessage(), null, Messages.EVERYONERIGHTITEMLORE.getMessage()+Messages.BLOCKSETTINGSITEMNAME.getMessage()));
+        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,Messages.MEMBERSITEMNAME.getMessage(), null, Messages.MEMBERSPLUSRIGHTITEMLORE.getMessage()+Messages.BLOCKSETTINGSITEMNAME.getMessage()));
+        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,Messages.ADMINSITEMNAME.getMessage(), null, Messages.ADMINSANDOWNERRIGHTITEMLORE.getMessage()+Messages.BLOCKSETTINGSITEMNAME.getMessage()));
+        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,Messages.OWNERITEMNAME.getMessage(), null, Messages.OWNERRIGHTITEMLORE.getMessage()+Messages.BLOCKSETTINGSITEMNAME.getMessage()));
 
         player.openInventory(setActivated(gui, destroyBlocks));
 
@@ -283,12 +280,12 @@ public class KingdomSettings implements KingdomInterface{
 
     public void openInteractInventory(Player player){
 
-        Inventory gui = Bukkit.createInventory(null, 27, ChatColor.GOLD + "Interact settings");
+        Inventory gui = Bukkit.createInventory(null, 27, Messages.INTERACTSETTINGSINVENTORYNAME.getMessage());
 
-        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,ChatColor.YELLOW + "Everyone", null, "Everyone can Interact"));
-        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,ChatColor.GOLD + "Members", null, "Members+ can Interact"));
-        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,ChatColor.RED + "Admins", null, "Admins and the Owner can Interact"));
-        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,ChatColor.GREEN + "Owner", null, "Only the Owner can Interact"));
+        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1, Messages.EVERYONEITEMNAME.getMessage(), null, Messages.EVERYONERIGHTITEMLORE.getMessage()+Messages.INTERACTSETTINGSITEMNAME.getMessage()));
+        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1, Messages.MEMBERSITEMNAME.getMessage(), null, Messages.MEMBERSPLUSRIGHTITEMLORE.getMessage()+Messages.INTERACTSETTINGSITEMNAME.getMessage()));
+        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1, Messages.ADMINSITEMNAME.getMessage(), null, Messages.ADMINSANDOWNERRIGHTITEMLORE.getMessage()+Messages.INTERACTSETTINGSITEMNAME.getMessage()));
+        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1, Messages.OWNERITEMNAME.getMessage(), null, Messages.OWNERRIGHTITEMLORE.getMessage()+Messages.INTERACTSETTINGSITEMNAME.getMessage()));
 
         player.openInventory(setActivated(gui, interact));
 
@@ -296,12 +293,12 @@ public class KingdomSettings implements KingdomInterface{
 
     public void openPvPInventory(Player player){
 
-        Inventory gui = Bukkit.createInventory(null, 27, ChatColor.GOLD + "PvP settings");
+        Inventory gui = Bukkit.createInventory(null, 27, Messages.PVPSETTINGSINVENTORYNAME.getMessage());
 
-        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,ChatColor.YELLOW + "Everyone", null, "Everyone can hit players"));
-        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,ChatColor.GOLD + "Members", null, "Members+ can hit players"));
-        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,ChatColor.RED + "Admins", null, "Admins and the Owner can hit players"));
-        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,ChatColor.GREEN + "Owner", null, "Only the Owner can hit players"));
+        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,Messages.EVERYONEITEMNAME.getMessage(), null, Messages.EVERYONERIGHTITEMLORE.getMessage()+Messages.PVPSETTINGSITEMNAME.getMessage()));
+        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,Messages.MEMBERSITEMNAME.getMessage(), null, Messages.MEMBERSPLUSRIGHTITEMLORE.getMessage()+Messages.PVPSETTINGSITEMNAME.getMessage()));
+        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1, Messages.ADMINSITEMNAME.getMessage(), null, Messages.ADMINSANDOWNERRIGHTITEMLORE.getMessage()+Messages.PVPSETTINGSITEMNAME.getMessage()));
+        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1, Messages.OWNERITEMNAME.getMessage(), null, Messages.OWNERRIGHTITEMLORE.getMessage()+Messages.PVPSETTINGSITEMNAME.getMessage()));
 
         player.openInventory(setActivated(gui, PvP ));
 
@@ -309,12 +306,12 @@ public class KingdomSettings implements KingdomInterface{
 
     public void openDamagePetsInventory(Player player){
 
-        Inventory gui = Bukkit.createInventory(null, 27, ChatColor.GOLD + "Damage Pets settings");
+        Inventory gui = Bukkit.createInventory(null, 27, Messages.DAMAGEPETSETTINGSINVENTORYNAME.getMessage());
 
-        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,ChatColor.YELLOW + "Everyone", null, "Everyone can damage Pets"));
-        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,ChatColor.GOLD + "Members", null, "Members+ can damage Pets"));
-        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,ChatColor.RED + "Admins", null, "Admins and the Owner can damage Pets"));
-        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,ChatColor.GREEN + "Owner", null, "Only the Owner can damage Pets"));
+        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,Messages.EVERYONEITEMNAME.getMessage(), null, Messages.EVERYONERIGHTITEMLORE.getMessage()+Messages.DAMAGEPETSRIGHTITEM.getMessage()));
+        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,Messages.MEMBERSITEMNAME.getMessage(), null, Messages.MEMBERSPLUSRIGHTITEMLORE.getMessage()+Messages.DAMAGEPETSRIGHTITEM.getMessage()));
+        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1, Messages.ADMINSITEMNAME.getMessage(), null, Messages.ADMINSANDOWNERRIGHTITEMLORE.getMessage()+Messages.DAMAGEPETSRIGHTITEM.getMessage()));
+        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1, Messages.OWNERITEMNAME.getMessage(), null, Messages.OWNERRIGHTITEMLORE.getMessage()+Messages.DAMAGEPETSRIGHTITEM.getMessage()));
 
         player.openInventory(setActivated(gui, hitPets));
 
@@ -322,10 +319,10 @@ public class KingdomSettings implements KingdomInterface{
 
     public void openInvulnerablePetsInventory(Player player){
 
-        Inventory gui = Bukkit.createInventory(null, 18, ChatColor.GOLD + "Invulnerable Pets settings");
+        Inventory gui = Bukkit.createInventory(null, 18, Messages.INVULNERABLEPETSSETTINGSINVENTORYNAME.getMessage());
 
-        gui.setItem(3, Utils.itemBuilder(Material.YELLOW_DYE, 1,ChatColor.YELLOW + "Invulnerable", null, "Pets are Invulerable"));
-        gui.setItem(5, Utils.itemBuilder(Material.RED_DYE, 1,ChatColor.RED + "Not Invulerable", null, "Pets are not Invulerable"));
+        gui.setItem(3, Utils.itemBuilder(Material.YELLOW_DYE, 1,Messages.INVULNERABLEPETS.getMessage(), null, Messages.INVULNERABLEPETSITEMLORE.getMessage()));
+        gui.setItem(5, Utils.itemBuilder(Material.RED_DYE, 1,Messages.NOTINVULNERABLEPETS.getMessage(), null, Messages.NOTINVULNERABLEPETSITEMLORE.getMessage()));
 
         if(invulerablePets){
             gui.setItem(12, activated);
@@ -344,23 +341,23 @@ public class KingdomSettings implements KingdomInterface{
 
     public void openPetInventory(Player player){
 
-        Inventory gui = Bukkit.createInventory(null, 9, ChatColor.GOLD + "Pet settings");
+        Inventory gui = Bukkit.createInventory(null, 9, Messages.PETSETTINGSINVENTORY.getMessage());
 
-        gui.setItem(3, Utils.itemBuilder(Material.YELLOW_DYE, 1, ChatColor.YELLOW + "Invulnerable Pets", null, ChatColor.DARK_GREEN + "Manage if Pets should be Invulerable"));
+        gui.setItem(3, Utils.itemBuilder(Material.YELLOW_DYE, 1, Messages.INVULNERABLEPETSSETTINGSINVENTORYITEMNAME.getMessage(), null, Messages.MANAGEIFPETSSHOULDBEINVULNERABLE.getMessage()));
 
-        gui.setItem(5, Utils.itemBuilder(Material.RED_DYE, 1, ChatColor.RED + "Damage Pets", null, ChatColor.DARK_GREEN + "Manage who can damage invulnerable Pets"));
+        gui.setItem(5, Utils.itemBuilder(Material.RED_DYE, 1, Messages.DAMAGEPETSSETTINGS.getMessage(), null, Messages.WHOCANHITINVULNERABLEPETSETTINGSITEM.getMessage()));
 
         player.openInventory(gui);
     }
 
     public void openEnterKingdom(Player player){
 
-        Inventory gui = Bukkit.createInventory(null, 27, ChatColor.GOLD + "Enter Kingdom settings");
+        Inventory gui = Bukkit.createInventory(null, 27, Messages.ENTERKINGDOMSETTINGS.getMessage());
 
-        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,ChatColor.YELLOW + "Everyone", null, "Everyone can enter the Kingdom"));
-        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,ChatColor.GOLD + "Members", null, "Members+ can enter the Kingdom"));
-        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1,ChatColor.RED + "Admins", null, "Admins and the Owner can enter the Kingdom"));
-        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1,ChatColor.GREEN + "Owner", null, "Only the Owner can enter the Kingdom"));
+        gui.setItem(10, Utils.itemBuilder(Material.YELLOW_DYE, 1,Messages.EVERYONEITEMNAME.getMessage(), null, Messages.EVERYONERIGHTITEMLORE.getMessage()+Messages.ENTERKINGDOMRIGHTS.getMessage()));
+        gui.setItem(12, Utils.itemBuilder(Material.ORANGE_DYE, 1,Messages.MEMBERSITEMNAME.getMessage(), null, Messages.MEMBERSPLUSRIGHTITEMLORE.getMessage()+Messages.ENTERKINGDOMRIGHTS.getMessage()));
+        gui.setItem(14, Utils.itemBuilder(Material.RED_DYE, 1, Messages.ADMINSITEMNAME.getMessage(), null, Messages.ADMINSANDOWNERRIGHTITEMLORE.getMessage()+Messages.ENTERKINGDOMRIGHTS.getMessage()));
+        gui.setItem(16, Utils.itemBuilder(Material.GREEN_DYE, 1, Messages.OWNERITEMNAME.getMessage(), null, Messages.OWNERRIGHTITEMLORE.getMessage()+Messages.ENTERKINGDOMRIGHTS.getMessage()));
 
         player.openInventory(setActivated(gui, enterKingdom));
 

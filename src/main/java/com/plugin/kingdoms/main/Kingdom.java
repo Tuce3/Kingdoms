@@ -19,12 +19,14 @@ public class Kingdom extends KingdomSettings{
     private Location maxLocation;
     private Cuboid2d area;
     private Cuboid2d checkArea;
+    private Cuboid2d tntCheckArea;
     private Particle particleType;
     private int particleAmount;
     private ArrayList<Location> ParticleLocations;
     private int particleRunnableId;
     private ArrayList<Location> portLocations;
     private String name = null;
+    private String topTitle = null;
 
 
     private final ArrayList<UUID> admins;
@@ -42,7 +44,7 @@ public class Kingdom extends KingdomSettings{
 
     }
 
-    public Kingdom(UUID owner, Location minLocation, Location maxLocation, Particle type, int particleAmount, int interact, int destroyBlocks, int settings, int addAdmins, int addMembers, int removeAdmins, int removeMembers, int pvp, boolean pets, int hitPets, int enterKingdom, ArrayList<UUID> admins, ArrayList<UUID> members, boolean tnTActive, String name){
+    public Kingdom(UUID owner, Location minLocation, Location maxLocation, Particle type, int particleAmount, int interact, int destroyBlocks, int settings, int addAdmins, int addMembers, int removeAdmins, int removeMembers, int pvp, boolean pets, int hitPets, int enterKingdom, ArrayList<UUID> admins, ArrayList<UUID> members, boolean tnTActive, String name, String topTitle){
 
         super( interact,  destroyBlocks,  settings,  addAdmins,  addMembers,  removeAdmins,  removeMembers,  pvp,  pets,  hitPets,  enterKingdom,  tnTActive);
         this.owner = owner;
@@ -56,13 +58,14 @@ public class Kingdom extends KingdomSettings{
         this.setMinLocation(minLocation, true);
         this.setMaxLocation(maxLocation, true);
         this.name = name;
+        this.topTitle = topTitle;
 
     }
 
     public void setMinLocation(Location location, boolean dataload){
         this.minLocation = location;
         if(Bukkit.getPlayer(owner) != null && !dataload){
-            Bukkit.getPlayer(owner).sendMessage(ChatColor.GREEN  + "First location set!");
+            Bukkit.getPlayer(owner).sendMessage(Messages.FIRSTLOCATIONSET.getMessage());
         }
     }
     public void setMaxLocation(Location location, boolean dataload){
@@ -78,19 +81,20 @@ public class Kingdom extends KingdomSettings{
 
 
 
-
         area = new Cuboid2d(minLocation, maxLocation);
         checkArea = new Cuboid2d(new Location(maxLocation.getWorld(), Math.min(minLocation.getX(), maxLocation.getX())-Kingdoms.getInstance().getConfig().getLong("mindistance"), 0d, Math.min(minLocation.getZ(), maxLocation.getZ())-Kingdoms.getInstance().getConfig().getLong("mindistance")), new Location(maxLocation.getWorld(), Math.max(minLocation.getX(), maxLocation.getX())+Kingdoms.getInstance().getConfig().getLong("mindistance"), 0d, Math.max(minLocation.getZ(), maxLocation.getZ())+Kingdoms.getInstance().getConfig().getLong("mindistance")));
+        tntCheckArea = new Cuboid2d(new Location(maxLocation.getWorld(), Math.min(minLocation.getX(), maxLocation.getX())-20, 0d, Math.min(minLocation.getZ(), maxLocation.getZ())-20), new Location(maxLocation.getWorld(), Math.max(minLocation.getX(), maxLocation.getX())+20, 0d, Math.max(minLocation.getZ(), maxLocation.getZ())+20));
+
 
         if(!dataload) {
             if (Kingdoms.getManager().getPlayersInKingdoms().containsKey(owner)) {
                 if (Bukkit.getPlayer(owner) != null) {
-                    Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "You can't build a new Kingdom while in a Kingdom!");
+                    Bukkit.getPlayer(owner).sendMessage(Messages.CANTCREATEKINGDOMWHILEIINKINGDOM.getMessage());
                     return;
                 }
             }
             if (minLocation.getWorld() != maxLocation.getWorld()) {
-                Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "You can't set the Locations in different Worlds!");
+                Bukkit.getPlayer(owner).sendMessage(Messages.CANTSETLOCATIONSINDIFFERENTWORLDS.getMessage());
                 return;
             }
 
@@ -107,17 +111,14 @@ public class Kingdom extends KingdomSettings{
 
             if (kingdomCantBeCreated) {
                 if (Bukkit.getPlayer(owner) != null) {
-                    Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "You cant create a new Kingdom here!");
+                    Bukkit.getPlayer(owner).sendMessage(Messages.CANTCREATEKINGDOMHERE.getMessage());
                     return;
                 }
             }
 
             if (area.getAreaSize() > Kingdoms.getInstance().getConfig().getLong("maxblocks") && !Bukkit.getOfflinePlayer(owner).isOp()) {
                 if (Bukkit.getPlayer(owner) != null) {
-                    Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "Your Kingdom is too big!");
-                    if (Bukkit.getPlayer(owner).isOp()) {
-                        Bukkit.getPlayer(owner).sendMessage(ChatColor.RED + "You can change how big a Kingdom can be with /kingdom settings setmaxblocks <number>");
-                    }
+                    Bukkit.getPlayer(owner).sendMessage(Messages.KINGDOMTOOBIG.getMessage());
                     return;
                 }
 
@@ -131,7 +132,7 @@ public class Kingdom extends KingdomSettings{
             }
             if(kingdomsizeOfPlayer > Kingdoms.getInstance().getConfig().getLong("maxblockperplayer") && !Bukkit.getOfflinePlayer(owner).isOp()){
                 if(Bukkit.getPlayer(owner) != null){
-                    Bukkit.getPlayer(owner).sendMessage(ChatColor.GREEN + "You have reached the max size of all your Kingdoms");
+                    Bukkit.getPlayer(owner).sendMessage(Messages.MAXSIZEKINGDOMSPERPLAYER.getMessage());
 
                 }
                 return;
@@ -141,7 +142,7 @@ public class Kingdom extends KingdomSettings{
         calculateParticleLocation();
 
         if(Bukkit.getPlayer(owner) != null){
-            Bukkit.getPlayer(owner).sendMessage(ChatColor.GREEN + "Kingdom created!");
+            Bukkit.getPlayer(owner).sendMessage(Messages.KINGDOMCREATED.getMessage());
         }
         if(Kingdoms.getInstance().getConfig().getBoolean("particles")){
             spawnParticles();
@@ -212,6 +213,12 @@ public class Kingdom extends KingdomSettings{
     public void setName(String name) {
         this.name = name;
     }
+    public String getTopTitle() {
+        return topTitle;
+    }
+    public void setTopTitle(String topTitle) {
+        this.topTitle = topTitle;
+    }
 
 
     public void setParticleType(Particle p){
@@ -241,10 +248,13 @@ public class Kingdom extends KingdomSettings{
     public void setCheckArea(Cuboid2d checkArea) {
         this.checkArea = checkArea;
     }
+    public Cuboid2d getTntCheckArea() {
+        return tntCheckArea;
+    }
 
     public void openSeeOwner(Player player){
 
-        Inventory gui = Bukkit.createInventory(null, 9, ChatColor.GOLD + "Owner settings");
+        Inventory gui = Bukkit.createInventory(null, 9, Messages.OWNERSETTINGSINVENTORYNAME.getMessage());
 
         gui.setItem(4, Utils.givePlayerHead(owner));
 
@@ -253,7 +263,7 @@ public class Kingdom extends KingdomSettings{
     }
     public void openSeeAdmins(Player player, int page){
 
-        Inventory gui = Bukkit.createInventory(null, 54, ChatColor.GOLD + "Admins settings");
+        Inventory gui = Bukkit.createInventory(null, 54, Messages.ADMINSSETTINGSINVENTORYNAME.getMessage());
 
         int i;
 
@@ -323,7 +333,7 @@ public class Kingdom extends KingdomSettings{
     }
     public void openSeeMembers(Player player, int page){
 
-        Inventory gui = Bukkit.createInventory(null, 54, ChatColor.GOLD + "Members settings");
+        Inventory gui = Bukkit.createInventory(null, 54, Messages.MEMBERSSETTINGSINVENTORYNAME.getMessage());
 
         int i;
 
@@ -393,17 +403,17 @@ public class Kingdom extends KingdomSettings{
     }
     public void openBorderParticleColor(Player player){
 
-        Inventory gui = Bukkit.createInventory(null, 18, ChatColor.GOLD + "Particle settings");
+        Inventory gui = Bukkit.createInventory(null, 18, Messages.PARTICLESETTINGSINVENTORYNAME.getMessage());
 
-        gui.setItem(0, Utils.itemBuilder(Material.GRAY_DYE, 1,ChatColor.GRAY + "Ash particles", null, null));
+        gui.setItem(0, Utils.itemBuilder(Material.GRAY_DYE, 1,Messages.ASHPARTICLESITEMNAME.getMessage(), null, null));
 
-        gui.setItem(2, Utils.itemBuilder(Material.LIME_DYE, 1, ChatColor.GREEN + "Villager particles", null, null));
+        gui.setItem(2, Utils.itemBuilder(Material.LIME_DYE, 1, Messages.VILLAGERPARTICLESITEMNAME.getMessage(), null, null));
 
-        gui.setItem(4, Utils.itemBuilder(Material.RED_DYE, 1, ChatColor.RED + "Lava particles", null, null));
+        gui.setItem(4, Utils.itemBuilder(Material.RED_DYE, 1, Messages.LAVAPARTICLESITEMNAME.getMessage(), null, null));
 
-        gui.setItem(6, Utils.itemBuilder(Material.BLUE_DYE, 1, ChatColor.BLUE + "Water particles", null, null));
+        gui.setItem(6, Utils.itemBuilder(Material.BLUE_DYE, 1, Messages.WATERPARTICLESITEMNAME.getMessage(), null, null));
 
-        gui.setItem(8, Utils.itemBuilder(Material.BLACK_DYE, 1, "No particles", null, null));
+        gui.setItem(8, Utils.itemBuilder(Material.BLACK_DYE, 1, Messages.NOPARTICLESITEMNAME.getMessage(), null, null));
 
 
         if(particleType != null && particleType == Particle.ASH){

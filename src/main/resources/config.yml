@@ -1,4 +1,4 @@
-#the max sie of a kingdom, x*z length
+#the max size of a kingdom, x*z length
 maxblocks: 10000000
 #The max amount of blocks all Kingdoms of a Player can have in total
 maxblockperplayer: 10000000
@@ -6,7 +6,7 @@ maxblockperplayer: 10000000
 maxkingdomsperplayer: 10000000
 #The max amount of Kingdoms in total
 maxkingdoms: 1000000
-#The mindistance 2 kingdoms have to have to eachother.
+#The distance 2 kingdoms have to have to eachother.
 mindistance: 20
 #If Particles can be used
 particles: true
@@ -27,3 +27,13 @@ enterKingdom: 1
 autosave: false
 #Amount of ticks between the saves, 20 ticks = 1 second, 1200 or higher recommended, only if autosave is on
 autosavetime: 1200
+#The max length of a Kingdom name, I don't recommend making it longer than 40
+maxnamelength: 40
+#The max length of the Top title, can be change via command, I don't recommend making it longer than 20
+maxtitlelength: 20
+#If the Kingdoms a banned player should be deleted
+deleteonban: false
+#If TnT can destroy Blocks in Kingdoms if it is outside of them
+destroyoutsideofkingdom: false
+#If the message.yml file should be generated, in which you can change the messages, if true the file will be generated and the messages replaced
+generatemessagefile: false
