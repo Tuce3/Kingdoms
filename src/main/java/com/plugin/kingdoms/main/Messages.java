@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 public enum Messages {
 
 
-    CREATEDKINGDOMCOMMAND(ChatColor.GREEN + "Created a new Kingdom! Set the 2 Location via right clicking on blocks! You have 60 Seconds to do that!\""),
+    CREATEDKINGDOMCOMMAND(ChatColor.GREEN + "Created a new Kingdom! Set the 2 Location via right clicking on blocks! You have " + Kingdoms.getInstance().getConfig().getInt("timeToBuildKingdom") + " seconds to do that!\""),
     SUCCESSFULLYDELETEDKINGDOMS(ChatColor.GREEN + "Deleted Kingdom! There is no way to reverse this Action!"),
     NORIGHTS(ChatColor.RED + "You don't have the right to use this command!"),
     MAXAMOUNTOFKINGDOMS(ChatColor.RED+"The max amount of Kingdoms has been reached! You can't create any more!"),
@@ -59,6 +59,7 @@ public enum Messages {
     CANTSETLOCATIONSINDIFFERENTWORLDS(ChatColor.RED + "You can't set the Locations in different Worlds!"),
     CANTCREATEKINGDOMHERE(ChatColor.RED + "You cant create a new Kingdom here!"),
     KINGDOMTOOBIG(ChatColor.RED + "Your Kingdom is too big!"),
+    KINGDOMBIGGERTHANPERMISSION(ChatColor.RED + "You don't have the rights to build bigger kingdom than "),
     KINGDOMCREATED(ChatColor.GREEN + "Kingdom created!"),
     ACTIVATEDITEM(ChatColor.GREEN + "Activated"),
     DEACTIVATEDITEM(ChatColor.GREEN + "Deactivated"),

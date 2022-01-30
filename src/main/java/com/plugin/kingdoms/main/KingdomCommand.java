@@ -443,12 +443,12 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
             public void run() {
                 if(Kingdoms.getManager().getUnfinishedKingdomList().contains(k)){
                     if(Bukkit.getPlayer(k.getOwner()) != null){
-                        Bukkit.getPlayer(k.getOwner()).sendMessage(ChatColor.RED + "You didnt create a Kingdom because you ran out of time!");
+                        Bukkit.getPlayer(k.getOwner()).sendMessage(ChatColor.RED + "You didn't create a Kingdom because you ran out of time!");
                     }
                     Kingdoms.getManager().getUnfinishedKingdomList().removeIf(k2 -> k2.getOwner().equals(k.getOwner()));
                 }
             }
-        }, 1200);
+        }, Kingdoms.getInstance().getConfig().getInt("timeToBuildKingdom") * 20);
 
 
 

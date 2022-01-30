@@ -2,7 +2,7 @@ package com.plugin.kingdoms.main.Utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;

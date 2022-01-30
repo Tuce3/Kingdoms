@@ -1,6 +1,7 @@
 package com.plugin.kingdoms.main;
 
 import org.bukkit.*;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -10,6 +11,8 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.UUID;
 
 public class Kingdom extends KingdomSettings{
@@ -123,6 +126,21 @@ public class Kingdom extends KingdomSettings{
                 }
 
             }
+
+            int biggestSizeOfKingdom = 0;
+            ConfigurationSection kingdomSizes = Kingdoms.getInstance().getConfig().getConfigurationSection("kingdomSizes");
+            for(String key : kingdomSizes.getKeys(false)) {
+                if(Bukkit.getPlayer(owner) != null && Bukkit.getPlayer(owner).hasPermission(kingdomSizes.getString(key + ".permission-node")))
+                    if(kingdomSizes.getInt(key + ".size") > biggestSizeOfKingdom)
+                        biggestSizeOfKingdom = kingdomSizes.getInt(key + ".size");
+            }
+
+            if(biggestSizeOfKingdom <= 0 || area.getAreaSize() > biggestSizeOfKingdom) {
+                if(Bukkit.getPlayer(owner) != null)
+                    Bukkit.getPlayer(owner).sendMessage(Messages.KINGDOMBIGGERTHANPERMISSION.getMessage() + biggestSizeOfKingdom + " blocks");
+                return;
+            }
+
             long kingdomsizeOfPlayer = 0;
             kingdomsizeOfPlayer += area.getAreaSize();
             for(Kingdom k : Kingdoms.getManager().getKingdomList()){

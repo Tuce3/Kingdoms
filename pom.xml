@@ -6,7 +6,7 @@
 
     <groupId>com.plugin.Kingdoms</groupId>
     <artifactId>Main</artifactId>
-    <version>1.0</version>
+    <version>1.0T</version>
     <packaging>jar</packaging>
 
     <name>KingdomsPlugin</name>
@@ -64,11 +64,17 @@
     </repositories>
 
     <dependencies>
+        <!--This adds the Spigot API artifact to the build -->
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <artifactId>spigot-api</artifactId>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>13.0</version>
         </dependency>
     </dependencies>
 </project>

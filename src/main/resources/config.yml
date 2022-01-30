@@ -37,3 +37,13 @@ deleteonban: false
 destroyoutsideofkingdom: false
 #If the message.yml file should be generated, in which you can change the messages, if true the file will be generated and the messages replaced
 generatemessagefile: false
+#Time player has to build a kingdom (in seconds)
+timeToBuildKingdom: 60
+#How big of a kingdom can player build with certain permission
+kingdomSizes:
+  small: #Name(doesn't really matter)
+    permission-node: "kingdom.small" #Permission needed to make kingdom of this size
+    size: 10 #Max size of kingdom in blocks
+  medium:
+    permission-node: "kingdom.medium"
+    size: 20
