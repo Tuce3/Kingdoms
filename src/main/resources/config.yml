@@ -42,8 +42,8 @@ timeToBuildKingdom: 60
 #How big of a kingdom can player build with certain permission
 kingdomSizes:
   small: #Name(doesn't really matter)
-    permission-node: "kingdom.small" #Permission needed to make kingdom of this size
-    size: 10 #Max size of kingdom in blocks
+    permission-node: "kingdom.small" #Permission needed to obtain bigger kingdom sizes
+    size: 10 #Added size of kingdom(stackable)
   medium:
     permission-node: "kingdom.medium"
     size: 20

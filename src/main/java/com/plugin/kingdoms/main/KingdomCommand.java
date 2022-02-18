@@ -46,6 +46,13 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
             Player player = (Player) sender;
 
             if (args[0].equalsIgnoreCase("create")) {
+                for (Kingdom k : Kingdoms.getManager().getResizingKingdomList()) {
+                    if (k.getOwner().equals(player.getUniqueId())) {
+                        player.sendMessage(Messages.ALREADYRESIZINGKINGDOM.getMessage());
+                        return false;
+                    }
+                }
+
                 if(Kingdoms.getManager().getKingdomList().size() >= Kingdoms.getInstance().getConfig().getLong("maxkingdoms") && !player.isOp()){
                     player.sendMessage(Messages.MAXAMOUNTOFKINGDOMS.getMessage());
                     return false;
@@ -114,154 +121,154 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
 
             } else if (args[0].equalsIgnoreCase("settings")) {
 
-                if(args.length >= 3 && args[1].equalsIgnoreCase("title")){
-                    if(Kingdoms.getManager().getPlayersInKingdoms().containsKey(player.getUniqueId())){
-                        if(Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId()).getOwner().equals(player.getUniqueId())){
-                            if(Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId()).getName() == null){
+                if (args.length >= 3 && args[1].equalsIgnoreCase("title")) {
+                    if (Kingdoms.getManager().getPlayersInKingdoms().containsKey(player.getUniqueId())) {
+                        if (Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId()).getOwner().equals(player.getUniqueId())) {
+                            if (Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId()).getName() == null) {
                                 player.sendMessage(Messages.GIVENAMEBEFORESETTINGTITLE.getMessage());
                             }
                             StringBuilder newTitle = new StringBuilder();
-                            for(int i = 2; i<args.length;i++){
+                            for (int i = 2; i < args.length; i++) {
                                 newTitle.append(args[i]);
                                 newTitle.append(" ");
                             }
-                            if(newTitle.length() > Kingdoms.getInstance().getConfig().getInt("maxtitlelength")+1){
+                            if (newTitle.length() > Kingdoms.getInstance().getConfig().getInt("maxtitlelength") + 1) {
                                 player.sendMessage(Messages.MAXTITLELENGTH.getMessage());
                                 return false;
                             }
-                            player.sendMessage(Messages.NEWTITLESET.getMessage()+newTitle);
+                            player.sendMessage(Messages.NEWTITLESET.getMessage() + newTitle);
                             Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId()).setTopTitle(newTitle.toString());
-                        }else{
+                        } else {
                             player.sendMessage(Messages.NORIGTHSCHANGETITLE.getMessage());
                         }
-                    }else{
+                    } else {
                         player.sendMessage(Messages.NEEDTOBEINKINGDOM.getMessage());
                     }
                     return false;
                 }
 
-                if(args.length >= 4 && args[1].equalsIgnoreCase("addadmin")){
-                    if(Bukkit.getPlayer(args[2]) != null){
+                if (args.length >= 4 && args[1].equalsIgnoreCase("addadmin")) {
+                    if (Bukkit.getPlayer(args[2]) != null) {
                         StringBuilder inputName = new StringBuilder();
-                        for(int i = 3; i<args.length; i++){
+                        for (int i = 3; i < args.length; i++) {
                             inputName.append(args[i]);
                         }
-                        for(Kingdom k : Kingdoms.getManager().getKingdomList()){
-                            if(k.getName() != null && k.getName().equals(inputName.toString()) && k.getOwner().equals(player.getUniqueId()) || k.getName() != null && k.getName().equals(inputName +" ") && k.getOwner().equals(player.getUniqueId())){
-                                if(!k.getAdmins().contains(Bukkit.getPlayer(args[2]).getUniqueId())){
+                        for (Kingdom k : Kingdoms.getManager().getKingdomList()) {
+                            if (k.getName() != null && k.getName().equals(inputName.toString()) && k.getOwner().equals(player.getUniqueId()) || k.getName() != null && k.getName().equals(inputName + " ") && k.getOwner().equals(player.getUniqueId())) {
+                                if (!k.getAdmins().contains(Bukkit.getPlayer(args[2]).getUniqueId())) {
                                     k.getAdmins().add(Bukkit.getPlayer(args[2]).getUniqueId());
                                     player.sendMessage(Messages.MADEADMIN.getMessage());
-                                }else{
+                                } else {
                                     player.sendMessage(Messages.ALREADYADMIN.getMessage());
                                 }
                                 return false;
                             }
                         }
                         player.sendMessage(Messages.KINGDOMNOTSPECIFIED.getMessage());
-                    }else{
+                    } else {
                         player.sendMessage(Messages.PLAYERNOTSPECIFIED.getMessage());
                     }
                     return false;
                 }
-                if(args.length >= 4 && args[1].equalsIgnoreCase("removeadmin")){
-                    if(Bukkit.getPlayer(args[2]) != null){
+                if (args.length >= 4 && args[1].equalsIgnoreCase("removeadmin")) {
+                    if (Bukkit.getPlayer(args[2]) != null) {
                         StringBuilder inputName = new StringBuilder();
-                        for(int i = 3; i<args.length; i++){
+                        for (int i = 3; i < args.length; i++) {
                             inputName.append(args[i]);
                         }
-                        for(Kingdom k : Kingdoms.getManager().getKingdomList()){
-                            if(k.getName() != null && k.getName().equals(inputName.toString()) && k.getOwner().equals(player.getUniqueId()) || k.getName() != null && k.getName().equals(inputName +" ") && k.getOwner().equals(player.getUniqueId())){
-                                if(k.getAdmins().remove(Bukkit.getPlayer(args[2]).getUniqueId())){
+                        for (Kingdom k : Kingdoms.getManager().getKingdomList()) {
+                            if (k.getName() != null && k.getName().equals(inputName.toString()) && k.getOwner().equals(player.getUniqueId()) || k.getName() != null && k.getName().equals(inputName + " ") && k.getOwner().equals(player.getUniqueId())) {
+                                if (k.getAdmins().remove(Bukkit.getPlayer(args[2]).getUniqueId())) {
                                     player.sendMessage(Messages.PLAYERNOLONGERADMIN.getMessage());
-                                }else {
+                                } else {
                                     player.sendMessage(Messages.SPECIFIEDPLAYERNOTADMIN.getMessage());
                                 }
                                 return false;
                             }
                         }
                         player.sendMessage(Messages.KINGDOMNOTSPECIFIED.getMessage());
-                    }else{
+                    } else {
                         player.sendMessage(Messages.PLAYERNOTSPECIFIED.getMessage());
                     }
                     return false;
                 }
-                if(args.length >= 4 && args[1].equalsIgnoreCase("addmember")){
-                    if(Bukkit.getPlayer(args[2]) != null){
+                if (args.length >= 4 && args[1].equalsIgnoreCase("addmember")) {
+                    if (Bukkit.getPlayer(args[2]) != null) {
                         StringBuilder inputName = new StringBuilder();
-                        for(int i = 3; i<args.length; i++){
+                        for (int i = 3; i < args.length; i++) {
                             inputName.append(args[i]);
                         }
-                        for(Kingdom k : Kingdoms.getManager().getKingdomList()){
-                            if(k.getName() != null && k.getName().equals(inputName.toString()) && k.getOwner().equals(player.getUniqueId()) || k.getName() != null && k.getName().equals(inputName +" ") && k.getOwner().equals(player.getUniqueId())){
-                                if(!k.getMembers().contains(Bukkit.getPlayer(args[2]).getUniqueId())){
+                        for (Kingdom k : Kingdoms.getManager().getKingdomList()) {
+                            if (k.getName() != null && k.getName().equals(inputName.toString()) && k.getOwner().equals(player.getUniqueId()) || k.getName() != null && k.getName().equals(inputName + " ") && k.getOwner().equals(player.getUniqueId())) {
+                                if (!k.getMembers().contains(Bukkit.getPlayer(args[2]).getUniqueId())) {
                                     k.getMembers().add(Bukkit.getPlayer(args[2]).getUniqueId());
                                     player.sendMessage(Messages.MADEMEMBER.getMessage());
-                                }else{
+                                } else {
                                     player.sendMessage(Messages.ALREADYMEMBER.getMessage());
                                 }
                                 return false;
                             }
                         }
                         player.sendMessage(Messages.KINGDOMNOTSPECIFIED.getMessage());
-                    }else{
+                    } else {
                         player.sendMessage(Messages.PLAYERNOTSPECIFIED.getMessage());
                     }
                     return false;
                 }
-                if(args.length >= 4 && args[1].equalsIgnoreCase("removemember")){
-                    if(Bukkit.getPlayer(args[2]) != null){
+                if (args.length >= 4 && args[1].equalsIgnoreCase("removemember")) {
+                    if (Bukkit.getPlayer(args[2]) != null) {
                         StringBuilder inputName = new StringBuilder();
-                        for(int i = 3; i<args.length; i++){
+                        for (int i = 3; i < args.length; i++) {
                             inputName.append(args[i]);
                         }
-                        for(Kingdom k : Kingdoms.getManager().getKingdomList()){
-                            if(k.getName() != null && k.getName().equals(inputName.toString()) && k.getOwner().equals(player.getUniqueId()) || k.getName() != null && k.getName().equals(inputName +" ") && k.getOwner().equals(player.getUniqueId())){
-                                if(k.getMembers().remove(Bukkit.getPlayer(args[2]).getUniqueId())){
+                        for (Kingdom k : Kingdoms.getManager().getKingdomList()) {
+                            if (k.getName() != null && k.getName().equals(inputName.toString()) && k.getOwner().equals(player.getUniqueId()) || k.getName() != null && k.getName().equals(inputName + " ") && k.getOwner().equals(player.getUniqueId())) {
+                                if (k.getMembers().remove(Bukkit.getPlayer(args[2]).getUniqueId())) {
                                     player.sendMessage(Messages.NOLONGERMEMBER.getMessage());
-                                }else {
+                                } else {
                                     player.sendMessage(Messages.SPECIFIEDPLAYERNOTMEMBER.getMessage());
                                 }
                                 return false;
                             }
                         }
                         player.sendMessage(Messages.KINGDOMNOTSPECIFIED.getMessage());
-                    }else{
+                    } else {
                         player.sendMessage(Messages.PLAYERNOTSPECIFIED.getMessage());
                     }
                     return false;
                 }
 
-                if(args.length >= 3 && args[1].equalsIgnoreCase("name")){
-                    if(Kingdoms.getManager().getPlayersInKingdoms().containsKey(player.getUniqueId())){
-                        if(Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId()).getOwner().equals(player.getUniqueId())){
+                if (args.length >= 3 && args[1].equalsIgnoreCase("name")) {
+                    if (Kingdoms.getManager().getPlayersInKingdoms().containsKey(player.getUniqueId())) {
+                        if (Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId()).getOwner().equals(player.getUniqueId())) {
                             StringBuilder newName = new StringBuilder();
-                            for(int i = 2; i<args.length;i++){
+                            for (int i = 2; i < args.length; i++) {
                                 newName.append(args[i]);
                                 newName.append(" ");
                             }
-                            if(newName.length() > Kingdoms.getInstance().getConfig().getInt("maxnamelength")+1){
+                            if (newName.length() > Kingdoms.getInstance().getConfig().getInt("maxnamelength") + 1) {
                                 player.sendMessage(Messages.MAXKINGDOMNAMELENNGTH.getMessage());
                                 return false;
                             }
-                            for(Kingdom k : Kingdoms.getManager().getKingdomList()){
-                                if(k.getName() != null && k.getName() != null && k.getName().equalsIgnoreCase(newName.toString()) && k.getOwner().equals(player.getUniqueId())){
+                            for (Kingdom k : Kingdoms.getManager().getKingdomList()) {
+                                if (k.getName() != null && k.getName() != null && k.getName().equalsIgnoreCase(newName.toString()) && k.getOwner().equals(player.getUniqueId())) {
                                     player.sendMessage(Messages.KINGDOMNAMEALREADYEXISTING.getMessage());
                                     return false;
                                 }
                             }
-                            player.sendMessage(Messages.NEWKINGDOMNAME.getMessage()+newName);
+                            player.sendMessage(Messages.NEWKINGDOMNAME.getMessage() + newName);
                             Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId()).setName(newName.toString());
-                        }else{
+                        } else {
                             player.sendMessage(Messages.NORIGHTSCHANGENAME.getMessage());
                         }
-                    }else{
+                    } else {
                         player.sendMessage(Messages.NEEDTOBEINKINGDOM.getMessage());
                     }
                     return false;
                 }
-                if(args.length == 2 && args[1].equalsIgnoreCase("deleteall")){
-                    if(player.isOp()){
-                        for(Kingdom y : Kingdoms.getManager().getKingdomList()){
+                if (args.length == 2 && args[1].equalsIgnoreCase("deleteall")) {
+                    if (player.isOp()) {
+                        for (Kingdom y : Kingdoms.getManager().getKingdomList()) {
                             Bukkit.getScheduler().cancelTask(y.getRunnableId());
                         }
                         Kingdoms.getManager().clearKingdomList();
@@ -269,10 +276,10 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
 
                         Kingdoms.getManager().safeData();
 
-                    }else{
+                    } else {
                         player.sendMessage(Messages.NORIGHTS.getMessage());
                     }
-                    return  false;
+                    return false;
                 }
                 if (Kingdoms.getManager().getPlayersInKingdoms().containsKey(player.getUniqueId())) {
                     Kingdom k = Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId());
@@ -342,13 +349,13 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
                             } else {
                                 player.sendMessage(Messages.NORIGHTS.getMessage());
                             }
-                        }else if (args[1].equalsIgnoreCase("removeadmin")) {
+                        } else if (args[1].equalsIgnoreCase("removeadmin")) {
                             if (k.getOwner().equals(player.getUniqueId())) {
                                 if (Bukkit.getPlayer(args[2]) != null && Bukkit.getPlayer(args[2]) != player) {
                                     if (k.getAdmins().contains(Bukkit.getPlayer(args[2]).getUniqueId())) {
                                         k.getAdmins().remove(Bukkit.getPlayer(args[2]).getUniqueId());
                                         player.sendMessage(Messages.PLAYERNOLONGERADMIN.getMessage());
-                                    }else{
+                                    } else {
                                         player.sendMessage(Messages.SPECIFIEDPLAYERNOTADMIN.getMessage());
                                     }
                                 } else {
@@ -359,7 +366,7 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
                                     if (k.getAdmins().contains(Bukkit.getPlayer(args[2]).getUniqueId())) {
                                         k.getAdmins().remove(Bukkit.getPlayer(args[2]).getUniqueId());
                                         player.sendMessage(Messages.PLAYERNOLONGERADMIN.getMessage());
-                                    }else{
+                                    } else {
                                         player.sendMessage(Messages.SPECIFIEDPLAYERNOTADMIN.getMessage());
                                     }
                                 } else {
@@ -374,7 +381,7 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
                                     if (k.getMembers().contains(Bukkit.getPlayer(args[2]).getUniqueId())) {
                                         k.getMembers().remove(Bukkit.getPlayer(args[2]).getUniqueId());
                                         player.sendMessage(Messages.NOLONGERMEMBER.getMessage());
-                                    }else{
+                                    } else {
                                         player.sendMessage(Messages.SPECIFIEDPLAYERNOTMEMBER.getMessage());
                                     }
                                 } else {
@@ -385,54 +392,81 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
                                     if (k.getMembers().contains(Bukkit.getPlayer(args[2]).getUniqueId())) {
                                         k.getMembers().remove(Bukkit.getPlayer(args[2]).getUniqueId());
                                         player.sendMessage(Messages.NOLONGERMEMBER.getMessage());
-                                    }else{
+                                    } else {
                                         player.sendMessage(Messages.SPECIFIEDPLAYERNOTMEMBER.getMessage());
                                     }
                                 } else {
                                     player.sendMessage(Messages.PLAYERNOTSPECIFIED.getMessage());
                                 }
-                            } else if (k.getMembers().contains(player.getUniqueId()) && k.getRemoveMembers() <=  2) {
+                            } else if (k.getMembers().contains(player.getUniqueId()) && k.getRemoveMembers() <= 2) {
                                 if (Bukkit.getPlayer(args[2]) != null && Bukkit.getPlayer(args[2]) != player) {
                                     if (k.getMembers().contains(Bukkit.getPlayer(args[2]).getUniqueId())) {
                                         k.getMembers().remove(Bukkit.getPlayer(args[2]).getUniqueId());
                                         player.sendMessage(Messages.NOLONGERMEMBER.getMessage());
-                                    }else{
+                                    } else {
                                         player.sendMessage(Messages.SPECIFIEDPLAYERNOTMEMBER.getMessage());
                                     }
-                                }else {
+                                } else {
                                     player.sendMessage(Messages.PLAYERNOTSPECIFIED.getMessage());
                                 }
-                            }else {
+                            } else {
                                 player.sendMessage(Messages.NORIGHTS.getMessage());
                             }
                         } else {
                             player.sendMessage(Messages.UNKNOWNCOMMAND.getMessage());
                         }
-                        }
-
-                    } else {
-                        player.sendMessage(Messages.NEEDTOBEINKINGDOM.getMessage());
                     }
 
-                    if(args.length >= 2 && args[0].equalsIgnoreCase("settings") && !Arrays.asList(new String[]{"title", "addadmin", "addmember", "removeadmin", "removemember", "delete", "deleteall", "name"}).contains(args[1])){
-                            StringBuilder inputName = new StringBuilder();
-                            for(int i = 3; i<args.length; i++){
-                                inputName.append(args[i]);
-                            }
-                            for(Kingdom k : Kingdoms.getManager().getKingdomList()){
-                                if(k.getName() != null && (k.getName().equals(inputName.toString()) && k.getOwner().equals(player.getUniqueId())) || (k.getName() != null && k.getName().equals(inputName +" ")) && k.getOwner().equals(player.getUniqueId())){
-                                    Kingdoms.getManager().getPlayersInKingdomSettings().put(player.getUniqueId(), k);
-                                    k.openAccessSettingsGui(player);
-                                    Kingdoms.getManager().getPlayersInKingdoms().put(player.getUniqueId(), k);
-                                }
-                            }
-                            player.sendMessage(Messages.KINGDOMNOTSPECIFIED.getMessage());
+                } else {
+                    player.sendMessage(Messages.NEEDTOBEINKINGDOM.getMessage());
+                }
+
+                if (args.length >= 2 && args[0].equalsIgnoreCase("settings") && !Arrays.asList(new String[]{"title", "addadmin", "addmember", "removeadmin", "removemember", "delete", "deleteall", "name"}).contains(args[1])) {
+                    StringBuilder inputName = new StringBuilder();
+                    for (int i = 3; i < args.length; i++) {
+                        inputName.append(args[i]);
+                    }
+                    for (Kingdom k : Kingdoms.getManager().getKingdomList()) {
+                        if (k.getName() != null && (k.getName().equals(inputName.toString()) && k.getOwner().equals(player.getUniqueId())) || (k.getName() != null && k.getName().equals(inputName + " ")) && k.getOwner().equals(player.getUniqueId())) {
+                            Kingdoms.getManager().getPlayersInKingdomSettings().put(player.getUniqueId(), k);
+                            k.openAccessSettingsGui(player);
+                            Kingdoms.getManager().getPlayersInKingdoms().put(player.getUniqueId(), k);
+                        }
+                    }
+                    player.sendMessage(Messages.KINGDOMNOTSPECIFIED.getMessage());
+                    return false;
+                }
+            } else if (args.length == 1 && args[0].equalsIgnoreCase("resize")) {
+                for (Kingdom k : Kingdoms.getManager().getUnfinishedKingdomList()) {
+                    if (k.getOwner().equals(player.getUniqueId())) {
+                        player.sendMessage(Messages.ALREADYSTARTEDKINGDOM.getMessage());
                         return false;
                     }
-                } else {
-                    player.sendMessage(Messages.UNKNOWNCOMMAND.getMessage());
                 }
+
+                if (Kingdoms.getManager().getPlayersInKingdoms().containsKey(player.getUniqueId())) {
+                    Kingdom k = Kingdoms.getManager().getPlayersInKingdoms().get(player.getUniqueId());
+                    if (k.getOwner().equals(player.getUniqueId())) {
+                        for (Kingdom k2 : Kingdoms.getManager().getResizingKingdomList()) {
+                            if (k2.getOwner().equals(player.getUniqueId())) {
+                                player.sendMessage(Messages.ALREADYRESIZINGKINGDOM.getMessage());
+                                return false;
+                            }
+                        }
+
+                        Kingdoms.getManager().getResizingKingdomList().add(k);
+                        player.sendMessage(Messages.RESIZEDKINGDOMCOMMAND.getMessage());
+                        PlayerResizeKingdom(k);
+                    } else {
+                        player.sendMessage(Messages.NORIGHTSRESIZEKINGDOM.getMessage());
+                    }
+                } else {
+                    player.sendMessage(Messages.NEEDTOBEINKINGDOM.getMessage());
+                }
+            } else {
+                player.sendMessage(Messages.UNKNOWNCOMMAND.getMessage());
             }
+        }
         return false;
     }
 
@@ -449,15 +483,26 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
                 }
             }
         }, Kingdoms.getInstance().getConfig().getInt("timeToBuildKingdom") * 20);
+    }
 
-
-
+    private void PlayerResizeKingdom(Kingdom k){
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Kingdoms.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                if (Kingdoms.getManager().getResizingKingdomList().contains(k)) {
+                    if (Bukkit.getPlayer(k.getOwner()) != null) {
+                        Bukkit.getPlayer(k.getOwner()).sendMessage(ChatColor.RED + "You didn't resize kingdom because you ran out of time!");
+                    }
+                    Kingdoms.getManager().getResizingKingdomList().removeIf(k2 -> k2.getOwner().equals(k.getOwner()));
+                }
+            }
+        }, Kingdoms.getInstance().getConfig().getInt("timeToBuildKingdom") * 20);
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if(args.length == 1){
-            return StringUtil.copyPartialMatches(args[0], Arrays.asList(new String[]{"create", "settings", "help", "save"}), new ArrayList<>());
+            return StringUtil.copyPartialMatches(args[0], Arrays.asList(new String[]{"create", "settings", "help", "save", "resize"}), new ArrayList<>());
         }else if(args.length == 2 && args[0].equalsIgnoreCase("settings")){
             return StringUtil.copyPartialMatches(args[1], Arrays.asList(new String[]{"title", "addadmin", "addmember", "removeadmin", "removemember", "delete", "deleteall", "name"}), new ArrayList<>());
         }

@@ -62,6 +62,7 @@ public class KingdomListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e){
         if(e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.HAND){
+            // Creating kingdom
             for(int i = 0; i< Kingdoms.getManager().getUnfinishedKingdomList().size(); i++){
                 Kingdom k = Kingdoms.getManager().getUnfinishedKingdomList().get(i);
                 if(k.getOwner().equals(e.getPlayer().getUniqueId())){
@@ -70,6 +71,46 @@ public class KingdomListener implements Listener {
                     }else if(k.getMaxLocation() == null){
                         k.setMaxLocation(e.getClickedBlock().getLocation(), false);
                     }
+                    break;
+                }
+            }
+            // Resizing kingdom
+            Location l = e.getClickedBlock().getLocation();
+            for(int i = 0; i < Kingdoms.getManager().getResizingKingdomList().size(); i++) {
+                Kingdom k = Kingdoms.getManager().getResizingKingdomList().get(i);
+                if (k.getOwner().equals(e.getPlayer().getUniqueId())) {
+                    Location min = k.getMinLocation();
+                    Location max = k.getMaxLocation();
+                    if (l.getWorld() != min.getWorld()) {
+                        e.getPlayer().sendMessage(Messages.CANTSETLOCATIONSINDIFFERENTWORLDS.getMessage());
+                        break;
+                    }
+
+                    if (k.getResizing() == false) {
+                        if (l.getBlockX() == min.getBlockX() && l.getBlockZ() == min.getBlockZ()) {
+                            k.setMinLocation(max, false, true);
+                            k.setMaxLocation(l, false, true);
+                        } else if (l.getBlockX() == min.getBlockX() && l.getBlockZ() == max.getBlockZ()) {
+                            Location newMin = new Location(min.getWorld(), max.getX(), l.getY(), min.getZ());
+                            k.setMinLocation(newMin, false, true);
+                            k.setMaxLocation(l, false, true);
+                        } else if (l.getBlockX() == max.getBlockX() && l.getBlockZ() == min.getBlockZ()) {
+                            Location newMin = new Location(min.getWorld(), min.getX(), l.getY(), max.getZ());
+                            k.setMinLocation(newMin, false, true);
+                            k.setMaxLocation(l, false, true);
+                        } else if (l.getBlockX() == max.getBlockX() && l.getBlockZ() == max.getBlockZ()){
+                            // If the l location is the same as max location nothing changes
+                            k.setMaxLocation(max, false, true); // Still calling this function because of player message
+                        } else {
+                            e.getPlayer().sendMessage(Messages.CORNERNOTSELECTED.getMessage());
+                            break;
+                        }
+                        k.setResizing(true);
+                    } else {
+                        k.setMaxLocation(l, false, true);
+                        k.setResizing(false);
+                    }
+                    break;
                 }
             }
         }

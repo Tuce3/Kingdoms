@@ -3,7 +3,6 @@ package com.plugin.kingdoms.main;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;//
 
 import java.io.File;
@@ -14,6 +13,7 @@ public class KingdomManager {
 
     private List<Kingdom> kingdomList;
     private List<Kingdom> unfinishedKingdomList;
+    private List<Kingdom> resizingKingdomList;
     private Map<UUID, Kingdom> playersInKingdoms;
 
     private Map<UUID, Kingdom> playersInKingdomSettings;
@@ -27,6 +27,7 @@ public class KingdomManager {
     public KingdomManager() throws IOException {
         kingdomList = new ArrayList<>();
         unfinishedKingdomList = new ArrayList<>();
+        resizingKingdomList = new ArrayList<>();
         playersInKingdoms = new HashMap<>();
 
         datafile = new File(Kingdoms.getInstance().getDataFolder(), "data.yml");
@@ -57,6 +58,9 @@ public class KingdomManager {
 
     public List<Kingdom> getUnfinishedKingdomList(){
         return  unfinishedKingdomList;
+    }
+    public List<Kingdom> getResizingKingdomList() {
+        return resizingKingdomList;
     }
     public void addKingdomToList(Kingdom k){
         kingdomList.add(k);
