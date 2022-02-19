@@ -77,6 +77,7 @@ public class KingdomManager {
     public YamlConfiguration getMessageFile() {
         return messageFile;
     }
+    public YamlConfiguration getChangeDataFile(){return changeDataFile;}
 
     public Map<UUID, Kingdom> getPlayersInKingdoms(){
         return  playersInKingdoms;

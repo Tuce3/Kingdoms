@@ -463,6 +463,21 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
                 } else {
                     player.sendMessage(Messages.NEEDTOBEINKINGDOM.getMessage());
                 }
+            } else if (args.length == 3 && args[0].equalsIgnoreCase("give_blocks") && player.isOp()) {
+                int numberOfBlocks = 0;
+                try {
+                    numberOfBlocks = Integer.parseInt(args[2]);
+                } catch (Exception e) {
+                    player.sendMessage(ChatColor.RED + "You didn't input number of blocks properly!");
+                    return false;
+                }
+                if (Bukkit.getPlayer(args[1]) != null && numberOfBlocks >= 0) {
+                    Kingdoms.getManager().getChangeDataFile().set("playerBlocks." + Bukkit.getPlayer(args[1]).getUniqueId(), numberOfBlocks);
+                    player.sendMessage(Messages.GAVEBLOCKS.getMessage() + numberOfBlocks + " blocks to " + Bukkit.getPlayer(args[1]).getName());
+                    Bukkit.getPlayer(args[1]).sendMessage(Messages.RECEIVEDBLOCKS.getMessage() + numberOfBlocks + " additional blocks to make your kingdom bigger!");
+                } else {
+                    player.sendMessage(ChatColor.RED + "You didn't input player name properly!");
+                }
             } else {
                 player.sendMessage(Messages.UNKNOWNCOMMAND.getMessage());
             }
@@ -501,8 +516,15 @@ public class KingdomCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        String[] list;
         if(args.length == 1){
-            return StringUtil.copyPartialMatches(args[0], Arrays.asList(new String[]{"create", "settings", "help", "save", "resize"}), new ArrayList<>());
+            Player player = (Player) sender;
+            if (player.isOp()) {
+                list = new String[]{"create", "settings", "help", "save", "resize", "give_blocks"};
+            } else {
+                list = new String[]{"create", "settings", "help", "save", "resize"};
+            }
+            return StringUtil.copyPartialMatches(args[0], Arrays.asList(list), new ArrayList<>());
         }else if(args.length == 2 && args[0].equalsIgnoreCase("settings")){
             return StringUtil.copyPartialMatches(args[1], Arrays.asList(new String[]{"title", "addadmin", "addmember", "removeadmin", "removemember", "delete", "deleteall", "name"}), new ArrayList<>());
         }

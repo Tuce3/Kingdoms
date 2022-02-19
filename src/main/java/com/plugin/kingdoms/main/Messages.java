@@ -61,6 +61,8 @@ public enum Messages {
     FIRSTLOCATIONSET(ChatColor.GREEN  + "First location set!"),
     CORNERSELECTED(ChatColor.GREEN + "Selected corner to move!"),
     CORNERNOTSELECTED(ChatColor.RED + "You need to select a corner of your Kingdom!"),
+    GAVEBLOCKS(ChatColor.GREEN + "You have given "),
+    RECEIVEDBLOCKS(ChatColor.GREEN + "You have received "),
     CANTSETLOCATIONSINDIFFERENTWORLDS(ChatColor.RED + "You can't set the Locations in different Worlds!"),
     CANTCREATEKINGDOMHERE(ChatColor.RED + "You cant create a new Kingdom here!"),
     KINGDOMTOOBIG(ChatColor.RED + "Your Kingdom is too big!"),

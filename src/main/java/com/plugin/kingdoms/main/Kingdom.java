@@ -138,6 +138,9 @@ public class Kingdom extends KingdomSettings{
             if(Bukkit.getPlayer(owner) != null && Bukkit.getPlayer(owner).hasPermission(kingdomSizes.getString(key + ".permission-node")))
                 allowedSizeOfKingdom += kingdomSizes.getInt(key + ".size");
         }
+        if (Kingdoms.getManager().getChangeDataFile().contains("playerBlocks") && Kingdoms.getManager().getChangeDataFile().contains("playerBlocks." + owner)) {
+            allowedSizeOfKingdom += Kingdoms.getManager().getChangeDataFile().getInt("playerBlocks." + owner);
+        }
 
         if(allowedSizeOfKingdom <= 0 || areaHelp.getAreaSize() > allowedSizeOfKingdom) {
             if(Bukkit.getPlayer(owner) != null)
